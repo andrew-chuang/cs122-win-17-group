@@ -1,10 +1,10 @@
-Outline of Yelp API 
+Outline of Yelp API and Web Scraping
 
 There are two main APIs within the Yelp API that will be useful to us: the Businesses API and the Search API. 
 
 ----Business API
 Each business is associated with a string business ID ('au-cheval-chicago'). The business API consists of a function, get_business, that takes a business ID and returns an object containing information about the business. This information includes:
-- basic identifying infoarmation
+- basic identifying information
 - average rating
 - location details
 - current deals
@@ -18,3 +18,8 @@ There are three functions in the Search API: search, search_by_bounding_box, and
 - Takes a general term (as used in any Yelp search)
 - Takes a category filter, or business category (extensive list provided in API)
 - Returns same information as get_business()
+
+############## Web Scraping
+
+When a search is made on the Yelp site, the URL can be re-used for other search terms as we did in the Web Scraping Lab. On the business page for a restaraunt, all the reviews are contained in a single dictionary/JSON object. It contains the stars, the review date, and the text of the review - but it does NOT contain the userID of the reviewer. 
+
