@@ -1,0 +1,20 @@
+Outline of Yelp API 
+
+There are two main APIs within the Yelp API that will be useful to us: the Businesses API and the Search API. 
+
+----Business API
+Each business is associated with a string business ID ('au-cheval-chicago'). The business API consists of a function, get_business, that takes a business ID and returns an object containing information about the business. This information includes:
+- basic identifying infoarmation
+- average rating
+- location details
+- current deals
+- one review for the business and review details]
+
+
+----Search API
+There are three functions in the Search API: search, search_by_bounding_box, and search_by_coordinates
+
+--search()
+- Takes a general term (as used in any Yelp search)
+- Takes a category filter, or business category (extensive list provided in API)
+- Returns same information as get_business()
