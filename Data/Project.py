@@ -123,7 +123,34 @@ def business_to_db(db):
                 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", \
                 (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o))
     
+'''
+Outline of project structure
+
+1. Function to specify search to a particular city/area
+
+2. Focusing on a number of metrics to determine similarity
+
+    Search for keywords in the text, ex. "service" and match what follows
+    to similar statements
+
+    Compute "distance" between the sets of reviews of two different restaurants
+
+    Latent semantic analysis
+
+    Compute average positivity scores
+
+    Each of these can be given a weight, then they're returned in a sorted list
+    of most similar restaurants as a tuple with a list of attributes that matched 
+    in order
+
+3. Combining with recommendations for entertainment
     
+    Includes time and type of venue
+
+    Produces a list of "schedules": tuples with venue and time
+
+
+'''
 # Begin coding
 
 
