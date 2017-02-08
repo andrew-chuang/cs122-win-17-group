@@ -151,6 +151,64 @@ Outline of project structure
 
 
 '''
+
+def select_location(location, db):
+    '''
+    Selects only restaurants in the relevant location
+
+    Inputs: 
+        location - string
+        db - database
+    '''
+
+def identify_similar(training, testing):
+    '''
+    Takes a set of reviews from the database and identifies similar phrases 
+    in reviews in the testing set
+
+    Inputs:
+        training - strings
+        testing - strings
+
+    returns: 
+        tuple of restaurant and int for similarity score 
+    '''
+
+def lsa(terms, db):
+    '''
+    Performs latent semantic analysis on the reviews to return a list of words related to the terms
+
+    Inputs:
+        terms - list of strings
+        db - database
+
+    returns:
+        list of related strings
+    '''
+
+def compute_scores(results):
+    '''
+    Takes the results of other functions and returns a set of scores
+
+    Inputs:
+        results - list of ints
+    Returns:
+        list of ints
+    '''
+
+def add_weights(scores, terms):
+    '''
+    This adds weights to the scores that come from other analyses
+
+    Inputs:
+        scores - list of ints
+        terms - list of strings
+
+    Returns:
+        list of ints
+    '''
+
+
 # Begin coding
 
 
