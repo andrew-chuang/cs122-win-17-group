@@ -1,0 +1,11 @@
+Andrew Chuang
+
+We are planning on using the Google APIs that will allow us to take the results from our main app and then modify the user’s Google Calendar or provide the user with directions or maps for their entire night out. 
+
+We have an API Key associated with our project so we can access the Google APIs. We will be using the OAuth API in order to access the project user’s credentials without actually handling their Google Login information. 
+
+We will also use the Google Calendar API in order to access the user’s calendar, make a separate calendar that includes the schedule for the suggested night out. 
+
+Finally, we will also be Google Maps API as well as the Google Directions API in order to provide the user with directions from each suggested location of the schedule. 
+
+Most of my work these two weeks has been trying to understand the documentation regarding the APIs. I have been working mostly with the OAuth and Calendar as a starting point to make sure that the API works. With the Calendar API, I have been trying to understand how the CalendarList class is set up. Calendar Lists contain all the calendars that users have added to their account, while Calendars are collections of events themselves. For this project, I’d like to have our project set up a new Calendar with the suggested events. 
