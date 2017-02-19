@@ -1,6 +1,7 @@
 # CS 122 Arif-Chuang-Hori-Teehan Yelp Recommender Project
 #
-# 
+# Imports taken from the samples of Google API for Python Client 
+# GitHub 
 #
 
 import sys
@@ -11,7 +12,10 @@ import os
 from oauth2client.file import Storage
 
 
-def main(argv):
+def list_calendars(argv):
+    '''
+
+    '''
     # Authenticate and construct service.
     service, flags = sample_tools.init(
         argv, 'calendar', 'v3', __doc__, __file__,
@@ -32,7 +36,53 @@ def main(argv):
         print('The credentials have been revoked or expired, please re-run'
               'the application to re-authorize.')
 
-def add_event(argv):
+
+def event_creator(event_list):
+    '''
+    Function takes in event_list, which contains the details for a Google
+    account as its elements, and uses it to construct a dictionary
+    that is later used to insert an event into the actual event of the user. 
+
+    Inputs:
+        event_list (list) contains the details of an event necessary to create 
+        an event using the Google Calendar API
+
+    Outputs:
+        event_details (dictionary) 
+    '''
+    event_details = {
+      'summary': '',
+      'location': '',
+      'description': '',
+      'start': {
+        'dateTime': '',
+        'timeZone': '',
+      },
+      'end': {
+        'dateTime': '',
+        'timeZone': '',
+      },
+      'recurrence': [
+        'RRULE:FREQ=DAILY;COUNT=2'
+      ],
+      'attendees': [
+        {'email': ''},
+        {'email': ''},
+      ],
+      'reminders': {
+        'useDefault': False,
+        'overrides': [
+          {'method': 'email', 'minutes': 24 * 60},
+          {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    }
+    for detail in event_list:
+
+    return event_details
+
+
+def add_event(argv, event_list):
     service, flags = sample_tools.init(
         argv, 'calendar', 'v3', __doc__, __file__,
         scope='https://www.googleapis.com/auth/calendar')
@@ -43,8 +93,10 @@ def add_event(argv):
             
 
 
+
+
 if __name__ == '__main__':
-    main(sys.argv)  
+    list_calendars(sys.argv)  
 
 
 
