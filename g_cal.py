@@ -95,14 +95,12 @@ def add_event(argv, event_list):
     try:
         page_token = None
         while True:
-            pass
+            service.events().insert(calendarId='primary', body=event).execute()
+            print('Event created: %s' % (event.get('htmlLink')))
 
     except client.AccessTokenRefreshError:
         print('The credentials have been revoked or expired, please re-run'
               'the application to re-authorize.')
-
-            
-
 
 
 
