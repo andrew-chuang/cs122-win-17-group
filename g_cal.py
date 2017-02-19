@@ -17,6 +17,8 @@ def list_calendars(argv):
 
     '''
     # Authenticate and construct service.
+    # Consider writing another function for
+    # just authenticating the users' credentials?
     service, flags = sample_tools.init(
         argv, 'calendar', 'v3', __doc__, __file__,
         scope='https://www.googleapis.com/auth/calendar')
@@ -77,8 +79,10 @@ def event_creator(event_list):
         ],
       },
     }
-    for detail in event_list:
-
+    
+    # Remember to talk to group about the best way to grab
+    # the users' time zone and whether or not we should
+    # be using Google's Timezone API?
     return event_details
 
 
@@ -86,10 +90,17 @@ def add_event(argv, event_list):
     service, flags = sample_tools.init(
         argv, 'calendar', 'v3', __doc__, __file__,
         scope='https://www.googleapis.com/auth/calendar')
+    event_details = event_creator(event_list)
 
     try:
         page_token = None
         while True:
+            pass
+
+    except client.AccessTokenRefreshError:
+        print('The credentials have been revoked or expired, please re-run'
+              'the application to re-authorize.')
+
             
 
 
