@@ -12,7 +12,7 @@ import os
 from oauth2client.file import Storage
 
 
-def list_calendars(argv):
+def display_calendars(argv):
     '''
 
     '''
@@ -67,10 +67,7 @@ def event_creator(event_list):
       'recurrence': [
         'RRULE:FREQ=DAILY;COUNT=2'
       ],
-      'attendees': [
-        {'email': ''},
-        {'email': ''},
-      ],
+      'attendees': [],
       'reminders': {
         'useDefault': False,
         'overrides': [
@@ -79,6 +76,18 @@ def event_creator(event_list):
         ],
       },
     }
+
+    event_details['summary'] = event_list[0]
+    event_details['location'] = event_list[1]
+    event_details['description'] = event_list[2]
+    event_details['start']['dateTime'] = event_list[4]
+    event_details['start']['timeZone'] = event_list[5]
+    event_details['end']['dateTime'] = event_list[4]
+    event_details['end']['timeZone'] = event_list[5]
+
+    if len(event_details) > 6:
+        event_details['attendees'].append(['email': event_list[6]])
+
     
     # Remember to talk to group about the best way to grab
     # the users' time zone and whether or not we should
@@ -87,6 +96,9 @@ def event_creator(event_list):
 
 
 def add_event(argv, event_list):
+    '''
+    Function adds event to the authorized users' calendar. 
+    '''
     service, flags = sample_tools.init(
         argv, 'calendar', 'v3', __doc__, __file__,
         scope='https://www.googleapis.com/auth/calendar')
@@ -95,17 +107,20 @@ def add_event(argv, event_list):
     try:
         page_token = None
         while True:
-            service.events().insert(calendarId='primary', body=event).execute()
+            service.events().insert(calendarId='primary', body = event_details).execute()
             print('Event created: %s' % (event.get('htmlLink')))
 
     except client.AccessTokenRefreshError:
         print('The credentials have been revoked or expired, please re-run'
               'the application to re-authorize.')
 
+def delete_event(argv, event_list):
+    pass
+
 
 
 if __name__ == '__main__':
-    list_calendars(sys.argv)  
+    display_calendars(sys.argv)  
 
 
 
