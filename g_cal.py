@@ -117,6 +117,9 @@ def add_event(argv, event_list):
 def delete_event(argv, event_list):
     pass
 
+def something_event():
+    pass
+
 
 
 if __name__ == '__main__':
