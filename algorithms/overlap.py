@@ -1,4 +1,4 @@
-import sqlite
+import sqlite3
 import pandas as pd
 import json
 import operator as op
