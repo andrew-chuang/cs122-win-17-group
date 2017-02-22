@@ -5,15 +5,16 @@
 #
 
 import sys
+import os
+import datetime
 
 from oauth2client import client
 from googleapiclient import sample_tools
-import os
 from oauth2client.file import Storage
-
 
 def display_calendars(argv):
     '''
+
 
     '''
     # Authenticate and construct service.
@@ -22,14 +23,15 @@ def display_calendars(argv):
     service, flags = sample_tools.init(
         argv, 'calendar', 'v3', __doc__, __file__,
         scope='https://www.googleapis.com/auth/calendar')
-
+    
+    final_cal_list = []
     try:
         page_token = None
         while True:
             calendar_list = service.calendarList().list(
                 pageToken=page_token).execute()
             for calendar_list_entry in calendar_list['items']:
-                print(calendar_list_entry['summary'])
+                final_cal_list.append(calendar_list_entry['summary'])
             page_token = calendar_list.get('nextPageToken')
             if not page_token:
                 break
@@ -37,6 +39,22 @@ def display_calendars(argv):
     except client.AccessTokenRefreshError:
         print('The credentials have been revoked or expired, please re-run'
               'the application to re-authorize.')
+    return final_cal_list
+
+
+
+def calendar_chooser(argv):
+    '''
+    Function reads in the list of calendars that the users has access to. 
+    If Yelp API has already authorized the construction 
+    of a new function, then function directly returns the 
+    '''
+    calendar_list = display_calendars(argv)
+    if not "yelp_calendar" in calendar_list:
+        return xyz
+    else:
+        return zyx 
+
 
 
 def event_creator(event_list):
@@ -114,8 +132,7 @@ def add_event(argv, event_list):
         print('The credentials have been revoked or expired, please re-run'
               'the application to re-authorize.')
 
-def delete_event(argv, event_list):
-    pass
+ 
 
 def something_event():
     pass
