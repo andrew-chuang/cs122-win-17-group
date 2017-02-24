@@ -22,193 +22,184 @@ Yelp provided functions:
     positive_category_words - generates positivity scores for words either
         globally or per-category
 
-###############################################################################
-
-Inputs:
-        review text, review star count
-        list of restaurants
-        restaurant categories/properties/attributes
-        time of day
-        location (zip code, neighborhood, city)
-        
-Returns:
-        list of restaurants
-        itinerary for night out
-        
-Procedure:
-    1) Input restaurant list
-        a) us business_data and review_data to 
-        
+###############################################################################      
 '''
 
 import json
 import sqlite3
 
 def import_json_data():
+    
     business_data = []
+    count = 1
     with open('yelp_academic_dataset_business.json') as json_data:
         for dict in json_data:
-            row = json.loads(dict)
-            business_data.append(row)
-      
-    #If we choose to use the checkin data    
-    
-    #checkin_data = []
-    #with open('yelp_academic_dataset_checkin.json') as json_data:
-    #    for dict in json_data:
-    #        row = json.loads(dict)
-    #        checkin_data.append(row)
-        
+            if count < 1000:
+                row = json.loads(dict)
+                business_data.append(row)
+                count +=1
+            else:
+                break
+
     review_data = []
+    count = 1
     with open('yelp_academic_dataset_review.json') as json_data:
         for dict in json_data:
-            row = json.loads(dict)
-            review_data.append(row)
-       
-    #If we choose to use the tip data
-    
-    #tip_data = []
-    #with open('yelp_academic_dataset_tip.json') as json_data:
-    #    for dict in json_data:
-    #        row = json.loads(dict)
-    #        data.append(row)
-        
+            if count < 100:
+                row = json.loads(dict)
+                review_data.append(row)
+                count +=1
+            else:
+                break
+     
     user_data = []
+    count = 1
     with open('yelp_academic_dataset_user.json') as json_data:
         for dict in json_data:
-            row = json.laods(dict)
-            user_data.append(dict)
+            if count < 100:
+                row = json.loads(dict)
+                user_data.append(dict)
+                count += 1
+            else:
+                break
+            
+    return business_data, review_data, user_data
+
+
 
 #First create a database in sqlite3 called 'data.db'
 #The database cannot store all data, because some data is in dictionaries or
 #   lists: neightborhoods, attributes, categories, hours
-def business_to_db(db):
+def business_to_db(db, business_data):
     con = sqlite3.connect(db)
     with con:
         cursor = con.cursor()
         
-        #Must change this to omit the dictionary/list data
-        cursor.execute("CREATE TABLE Business(business_id TEXT, name TEXT, \
-            neighborhoods ???, address TEXT, city TEXT, state TEXT, \
-            latitude FLOAT, longitude FLOAT, stars FLOAT, review_count \
-            INTEGER, is_open TEXT, attributes ???, categories ???, hours \
-            ???, type TEXT)")
+        #Create business table
+        cursor.execute("CREATE TABLE business(business_id TEXT, name TEXT, \
+            address TEXT, city TEXT, state TEXT, latitude FLOAT, longitude \
+            FLOAT, stars FLOAT, review_count INTEGER, is_open TEXT, type TEXT)")
         
-        counter = 0
-        for dict in business_data:
-            counter += 1
+        #Create attributes table ==> for business
+        cursor.execute("CREATE TABLE attributes(business_id TEXT, credit_cards \
+            TEXT, alcohol TEXT, attire TEXT, caters TEXT, delivery TEXT, \
+            drive_thru TEXT, good_for_groups TEXT, good_for_kids TEXT, has_tv \
+            TEXT, noise_level \
+            TEXT, outdoor_seating TEXT, price_range INTEGER, take_out TEXT, \
+            takes_res TEXT, waiters TEXT, wheelchairs TEXT, wifi TEXT, \
+            apple_pay TEXT, android_pay TEXT, bike_parking TEXT, music TEXT, \
+            coat_check TEXT, smoking TEXT, dogs TEXT, pool_table TEXT, \
+            happy_hour TEXT, dancing TEXT)")
+        
+        #Create neighborhoods table ==> for business
+        cursor.execute("CREATE TABLE neighborhoods(business_id TEXT, \
+            neighborhood TEXT)")
+        
+        #Create categories table ==> for business
+        cursor.execute("CREATE TABLE categories(business_id TEXT, \
+            category TEXT)")
+        
+        #cursor.execute("CREATE TABLE hours()")
+        
+        for dictionary in business_data:
             
-            a = dict['business_id']   
-            b = dict['name']
-            c = dict['neighborhoods']
-            d = dict['full_address']
-            e = dict['city']
-            f = dict['state']
-            g = dict['latitude']
-            h = dict['longitude']
-            i = dict['stars']
-            j = dict['review_count']
-            k = dict['open']
-            l = dict['attributes']
-            #l_ = []
-            #for attribute, value in l.items():
-            #    l_.append((attribute, value))
-            m = dict['categories']
-            n = dict['hours']
-            #n_ = []
-            #for day, value in n.items():
-            #    n_.append((day, value))
-            o = dict['type']
-            cursor.execute("INSERT INTO Business VALUES \
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", \
-                (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o))
-    
-'''
-Outline of project structure
+            cursor.execute("INSERT INTO business VALUES \
+                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", \
+                (dictionary['business_id'], dictionary['name'], \
+                dictionary['full_address'], dictionary['city'], \
+                dictionary['state'], dictionary['latitude'], \
+                dictionary['longitude'], dictionary['stars'], \
+                dictionary['review_count'], dictionary['open'], \
+                dictionary['type']))
+        
+            attributes = dictionary['attributes']
+            columns = ['business_id']
+            values = [dictionary['business_id']]
+            d = {'Accepts Credit Cards': 'credit cards', 'Good For Groups': \
+                 'good_for_groups', 'Good for Kids': 'good_for_kids', 'Has TV': \
+                 'has_tv', 'Noise Level': 'noise_level', 'Outdoor Seating':\
+                 'outdoor_seating', 'Price Range': 'price_range', 'Take-out': \
+                 'take_out', 'Takes Reservations': 'takes_res', 'Waiter Service': \
+                 'waiters', 'Wheelchair Accessible': 'wheelchairs', 'Accepts \
+                 Apple Pay': 'apple_pay', 'Accepts Android Pay': 'android_pay', \
+                 'Bike Parking': 'bike_parking', 'Coat Check': 'coat_check', \
+                 'Wi-Fi': 'wifi', 'Dogs Allowed': 'dogs', 'Has Pool Table': \
+                 'pool_table', 'Happy Hour': 'happy_hour', 'Good For Dancing': \
+                 'dancing'}
+            for key, value in attributes.items():
+                if key == 'Parking' or key == 'Ambience' or key == 'Good For' \
+                    or key == 'Best Nights':
+                    continue
+                if key in d:
+                    columns.append(d[key])
+                else:  
+                    columns.append(key.lower())
+                values.append(value)
+            columns = ", ".join(columns)
+            for item in values:
+                values[values.index(item)] = str(item)
+            values = ", ".join(values)
+            s = "INSERT INTO attributes " + "(" + columns + ")" + \
+                " VALUES " + "(" + values + ")"
+            cursor.execute(s)
+            
+            neighborhoods = dictionary['nightborhoods']
+            #columns = ['business_id', 'neighborhood']
+            for place in neighborhoods:
+                values = [dictionary['business_id'], place]
+                s = "INSERT INTO neighborhoods (business_id, neighborhood) \
+                VALUES (" + values + ")"
+                cursor.execute(s)
+                
+            categories = dictionary['categories']
+            #columns = ['business_id', 'category']
+            for category in categories:
+                values = [dictionary['business_id'], category]
+                s = "INSERT INTO categories (business_id, category) VALUES (" \
+                    + values + ")"
+                cursor.execute(s)
+            
+            
+            #Tables remaining to be created:\hours
+        
 
-1. Function to specify search to a particular city/area
-
-2. Focusing on a number of metrics to determine similarity
-
-    Search for keywords in the text, ex. "service" and match what follows
-    to similar statements
-
-    Compute "distance" between the sets of reviews of two different restaurants
-
-    Latent semantic analysis
-
-    Compute average positivity scores
-
-    Each of these can be given a weight, then they're returned in a sorted list
-    of most similar restaurants as a tuple with a list of attributes that matched 
-    in order
-
-3. Combining with recommendations for entertainment
-    
-    Includes time and type of venue
-
-    Produces a list of "schedules": tuples with venue and time
-
-
-'''
-
-def select_location(location, db):
-    '''
-    Selects only restaurants in the relevant location
-
-    Inputs: 
-        location - string
-        db - database
-    '''
-
-def identify_similar(training, testing):
-    '''
-    Takes a set of reviews from the database and identifies similar phrases 
-    in reviews in the testing set
-
-    Inputs:
-        training - strings
-        testing - strings
-
-    returns: 
-        tuple of restaurant and int for similarity score 
-    '''
-
-def lsa(terms, db):
-    '''
-    Performs latent semantic analysis on the reviews to return a list of words related to the terms
-
-    Inputs:
-        terms - list of strings
-        db - database
-
-    returns:
-        list of related strings
-    '''
-
-def compute_scores(results):
-    '''
-    Takes the results of other functions and returns a set of scores
-
-    Inputs:
-        results - list of ints
-    Returns:
-        list of ints
-    '''
-
-def add_weights(scores, terms):
-    '''
-    This adds weights to the scores that come from other analyses
-
-    Inputs:
-        scores - list of ints
-        terms - list of strings
-
-    Returns:
-        list of ints
-    '''
-
-
-# Begin coding
-
-
+        #Need: ambience, good_for, parking, best_nights, 
+        
+def review_to_db(db, review_data):
+    con = sqlite3.connect(db)
+    with con:
+        cursor = con.cursor()
+        
+        #Create review table
+        cursor.execute("CREATE TABLE review(business_id TEXT, date TEXT, \
+            review_id TEXT, stars INTEGER, text TEXT, type TEXT, \
+            user_id TEXT)")
+        
+        cursor.exectue("CREATE TABLE votes(cool INTEGER, funny INTEGER, \
+            useful INTEGER)")
+        columns = []
+        items = []
+        for review in review_data:
+            for key, value in review_data.items():
+                if key == 'votes':
+                    continue
+                else:
+                    column.append(key)
+                    items.append(value)
+            columns = ", ".join(columns)
+            items = ", ".join(items)
+            s = "INSERT INTO review " + "(" + columns + ")" + \
+                    " VALUES " + "(" + values + ")"
+            cursor.execute(s)
+                    
+            columns = []
+            items = []
+            votes = review['votes']
+            c = votes['cool']
+            f = votes['funny']
+            s = 'INSERT INTO votes (cool, funny, useful) VALUES (?,?,?)'
+            cursor.execute(s, (dictionary['cool'], dictionary['funny'], \
+                dictionary['useful']))
+            
+#def 
+        
