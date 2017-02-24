@@ -49,9 +49,26 @@ def calendar_chooser(argv):
     If Yelp API has already authorized the construction 
     of a new function, then function directly returns the 
     '''
-    calendar_list = display_calendars(argv)
-    if not "yelp_calendar" in calendar_list:
-        return xyz
+    service, flags = sample_tools.init(
+        argv, 'calendar', 'v3', __doc__, __file__,
+        scope='https://www.googleapis.com/auth/calendar')
+    try:
+        page_token = None
+        while True:
+            calendar_list = display_calendars(argv)
+            if not "yelp_calendar" in calendar_list:
+            yelp_calendar = {
+            "kind": "calendar#calendar", # Type of the resource ("calendar#calendar").
+            "description": "Yelp Recommendation Schedule", # Description of the calendar. Optional.
+            "summary": "Yelp Recommendation Calendar", # Title of the calendar.
+            "etag": "A String", # ETag of the resource.
+            "location": "Chicago", # Geographic location of the calendar as free-form text. Optional.
+            "timeZone": "American/Chicago", # The time zone of the calendar. 
+        #(Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.
+            "id": "A String", # Identifier of the calendar. To retrieve IDs call the calendarList.list() method.
+            }
+    service.calendars().insert(body = yelp_calendar).execute
+
     else:
         return zyx 
 

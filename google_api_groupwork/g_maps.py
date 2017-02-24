@@ -6,6 +6,7 @@
 #
 
 from google maps import convert
+import httplib2
 
                      ###############################
                      #   Following function        #
