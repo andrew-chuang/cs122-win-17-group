@@ -43,6 +43,7 @@ def display_calendars(argv):
 
 
 
+
 def calendar_chooser(argv):
     '''
     Function reads in the list of calendars that the users has access to. 
@@ -57,20 +58,25 @@ def calendar_chooser(argv):
         while True:
             calendar_list = display_calendars(argv)
             if not "yelp_calendar" in calendar_list:
-            yelp_calendar = {
-            "kind": "calendar#calendar", # Type of the resource ("calendar#calendar").
-            "description": "Yelp Recommendation Schedule", # Description of the calendar. Optional.
-            "summary": "Yelp Recommendation Calendar", # Title of the calendar.
-            "etag": "A String", # ETag of the resource.
-            "location": "Chicago", # Geographic location of the calendar as free-form text. Optional.
-            "timeZone": "American/Chicago", # The time zone of the calendar. 
-        #(Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.
-            "id": "A String", # Identifier of the calendar. To retrieve IDs call the calendarList.list() method.
-            }
-    service.calendars().insert(body = yelp_calendar).execute
+                yelp_calendar = {
+                "kind": "calendar#calendar", # Type of the resource ("calendar#calendar").
+                "description": "Yelp Recommendation Schedule", # Description of the calendar. Optional.
+                "summary": "Yelp Recommendation Calendar", # Title of the calendar.
+                "etag": "A String", # ETag of the resource.
+                "location": "Chicago", # Geographic location of the calendar as free-form text. Optional.
+                "timeZone": "American/Chicago", # The time zone of the calendar. 
+                #(Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.
+                "id": "A String", # Identifier of the calendar. 
+                #To retrieve IDs call the calendarList.list() method.
+                }
+                service.calendars().insert(body = yelp_calendar).execute
 
-    else:
-        return zyx 
+            else:
+                pass
+                
+    except client.AccessTokenRefreshError:
+        print('The credentials have been revoked or expired, please re-run'
+              'the application to re-authorize.')
 
 
 
@@ -120,8 +126,6 @@ def event_creator(event_list):
     event_details['end']['dateTime'] = event_list[4]
     event_details['end']['timeZone'] = event_list[5]
 
-    if len(event_details) > 6:
-        event_details['attendees'].append(['email': event_list[6]])
 
     
     # Remember to talk to group about the best way to grab
