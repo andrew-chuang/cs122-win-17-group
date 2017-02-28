@@ -1,11 +1,11 @@
 import bs4
 import urllib3
 import json
+import re
 from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 
 pm = urllib3.PoolManager()
-
 
 # read API keys
 with open('config_secret.json') as cred:
@@ -15,18 +15,22 @@ with open('config_secret.json') as cred:
 
 client = Client(auth)
 
-# restaurants as a list
-#page_order = range(0, (num_reviews+1), 40)
+
 
 class business:
 
 	def __init__(self, biz_id):
-
-		addr, count, rating = scrape_biz_basics(biz_id)
-		self.biz_id = biz_id
-		self.address = addr
-		self.review_count = count
-		self.rating = rating 
+		'''
+		Uses the Yelp API to obtain basic information about a business. 
+		'''
+		biz = client.get_business(biz_id).business
+		self.biz_name = biz.name
+		self.biz_id = biz.id
+		self.address = biz.location.address[0] + \
+			biz.location.city + biz.location.state_code
+		self.review_count = biz.review_count
+		self.rating = biz.rating
+		self.url = biz.url.split('?')[0] + '?'
 
 
 def find_intended_restaurant(name, loc):
@@ -35,9 +39,11 @@ def find_intended_restaurant(name, loc):
 		restaurant name and location (neighborhood, city, zip, etc).
 	'''
 	name = str(name)
-	location = str(location)
+	location = str(loc)
 
-	results = client.search(term=name, location=loc, limit=4)
+	results = client.search(term=name, location=loc, limit=4).businesses
+
+	return results
 
 
 def make_url(biz_id=None, user_id=None):
@@ -55,6 +61,7 @@ def make_url(biz_id=None, user_id=None):
 		'userid={}&rec_pagestart=0'.format(user_id)
 
 	return url
+
 
 def scrape_biz_basics(biz_id):
 	'''
@@ -78,18 +85,60 @@ def scrape_biz_basics(biz_id):
 	return (address, review_count, agg_rating)
 
 
+def scrape_biz_reviews(biz_id):
+	'''
+	Given a business ID, scrapes all reviews for the business. Includes:
+		user ID, date, stars, text. 
+
+	Returns: List of dictionaries, each dictionary containing information
+		for one review. 
+	'''
+	review_list = []
+
+	biz = business(biz_id)
+
+	html = pm.urlopen(url=biz.url, method="GET").data
+	soup = bs4.BeautifulSoup(html, "html.parser")
+
+	if biz.review_count <= 500:
+		pages = range(0, biz.review_count, 20)
+	else:
+		pages = range(0, 500, 20)
+
+	for page in pages:
+		url = biz.url + 'start={}'.format(page)
+		
+		html = pm.urlopen(url=url, method="GET").data
+		soup = bs4.BeautifulSoup(html, "html.parser")
+
+		# Only scraping English reviews
+		reviews = soup.find_all('p', lang='en')
+
+		for rev in reviews:
+			rev_text = rev.get_text(separator=' ')
 
 
 
 
+	return soup
 
 
 
-'''
-soup = soup.find_all('script', type="application/ld+json")
 
-js = json.loads(soup[0].text)
+def scrape_user_reviews(user_id):
+	'''
+	Given a user ID, scrapes all of the user's reviews. Includes: 
+		user ID, date, business ID, stars, text. 
 
-with open('JSData.json', 'w') as f:
-     json.dump(js, f)
-'''
+	Returns: List of dictionaries, each dictionary containing information 
+		for one review. 
+	'''
+	pass
+
+
+def scrape_biz_attributes():
+	pass
+	
+
+
+
