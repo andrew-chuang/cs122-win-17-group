@@ -5,7 +5,7 @@
 # 
 #
 
-from google maps import convert
+from google maps import convert, directions, timezone, places
 import httplib2
 
                      ###############################
