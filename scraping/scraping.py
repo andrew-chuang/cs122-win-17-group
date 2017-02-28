@@ -5,6 +5,8 @@ import re
 from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 
+MAX_REVIEWS = 500
+
 pm = urllib3.PoolManager()
 
 # read API keys
@@ -97,13 +99,11 @@ def scrape_biz_reviews(biz_id):
 
 	biz = business(biz_id)
 
-	html = pm.urlopen(url=biz.url, method="GET").data
-	soup = bs4.BeautifulSoup(html, "html.parser")
 
-	if biz.review_count <= 500:
+	if biz.review_count <= MAX_REVIEWS:
 		pages = range(0, biz.review_count, 20)
 	else:
-		pages = range(0, 500, 20)
+		pages = range(0, MAX_REVIEWS, 20)
 
 	for page in pages:
 		url = biz.url + 'start={}'.format(page)
@@ -113,14 +113,39 @@ def scrape_biz_reviews(biz_id):
 
 		# Only scraping English reviews
 		reviews = soup.find_all('p', lang='en')
+		review_dates = soup.find_all('span', class_="rating-qualifier")
 
-		for rev in reviews:
-			rev_text = rev.get_text(separator=' ')
+		date_list = []
+		for date in review_dates:
+			if len(date.attrs['class']) > 1:
+				continue 
+
+			is_updated = date.find_all('small')
+			if is_updated:
+				if is_updated[0].text == 'Previous review':
+					continue 
+				else:
+					date_list.append(date.text.strip().split('\n')[0])
+			else:
+				date_list.append(date.text.strip())
 
 
 
+		for i in range(0, len(reviews)):
 
-	return soup
+			review_dict = {}				
+
+
+			rev_text = reviews[i].get_text(separator=' ')
+
+			review_dict['text'] = rev_text
+
+			review_dict['date'] = date_list[i]
+
+			review_list.append(review_dict)
+
+
+	return review_list
 
 
 
