@@ -6,6 +6,7 @@ Required APIs:
 - Google Calendar
 - Google Maps
 - OAuth
+
 Required packages:
 - json
 - sqlite3
@@ -22,6 +23,7 @@ Required packages:
 - re
 - yelp
 - sys
+
 Hierarchy
 - Project
 	- algorithms
