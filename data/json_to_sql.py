@@ -84,8 +84,13 @@ def create_tables(db):
         cursor.execute("CREATE TABLE categories(business_id TEXT, \
             category TEXT)")
         
-        #Create review table
-        cursor.execute("CREATE TABLE review(business_id TEXT, date TEXT, \
+        #Create biz_reviews table
+        cursor.execute("CREATE TABLE biz_reviews(business_id TEXT, date TEXT, \
+            review_id TEXT, stars INTEGER, text TEXT, type TEXT, \
+            user_id TEXT)")
+        
+        #Create user_reviews table
+        cursor.execute("CREATE TABLE user_reviews(business_id TEXT, date TEXT, \
             review_id TEXT, stars INTEGER, text TEXT, type TEXT, \
             user_id TEXT)")
         
@@ -162,7 +167,7 @@ def business_to_db(db, business_data):
                 cursor.execute(s)
         
         
-def review_to_db(db, review_data):
+def review_to_db(db, review_data, table):
     con = sqlite3.connect(db)
     with con:
         cursor = con.cursor()
@@ -176,7 +181,7 @@ def review_to_db(db, review_data):
                     columns.append(key)
                     items.append(value)
             columns = ", ".join(columns)
-            s = "INSERT INTO review " + "(" + columns + ")" + \
+            s = "INSERT INTO " + table + "(" + columns + ")" + \
                     " VALUES (?,?,?,?,?,?)"
             cursor.execute(s, (items[0], items[1], items[2], items[3], items[4], \
                 items[5]))
