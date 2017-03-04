@@ -1,8 +1,11 @@
-# cs122-win-17-group
-# Repository for our CS 122 group project. Arif-Chuang-Hori-Teehan
+# Arif-Chuang-Hori-Teehan
 
-Project uses Google Calendar, Maps and OAuth API. 
+A project for CMSC 12200 - Computer Science with Applications II - University of Chicago
 
+- Required APIs:
+	- Google Calendar
+	- Google Maps
+	- OAuth
 - Required packages:
 	- json
 	- sqlite3
@@ -19,15 +22,22 @@ Project uses Google Calendar, Maps and OAuth API.
 	- re
 	- yelp
 	- sys
-	
 - Hierarchy
 	- Project
-		- algorithms - Ryan
+		- algorithms
+			- overlap.py
+			- text_analysis.py
 		- data - Jon
-		- django-workshop/mysite - Django tutorial
-		- google_api_groupwork - Andrew
-		- scraping - Salman
-		- yelp_rec_django - Andrew
+			- json_to_sql.py
+		- django-workshop/mysite
+		- google_api_groupwork
+		- scraping
+			- scraping.py
+		- yelp_rec_django
 	- Preliminary
+		- Arif-Chuang-Hori-Teehan Proposal.pdf
+		- Outline of Yelp API
+		- Yelp Restaurant Suggestion Queue.pptx
+		- googleapiwork.txt
 	- .gitignore
 	- README.md - This file
