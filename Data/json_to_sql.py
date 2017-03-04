@@ -52,30 +52,19 @@ def import_json_data():
                 count +=1
             else:
                 break
-     
-    user_data = []
-    count = 1
-    with open('yelp_academic_dataset_user.json') as json_data:
-        for dict in json_data:
-            if count < 100:
-                row = json.loads(dict)
-                user_data.append(dict)
-                count += 1
-            else:
-                break
             
-    return business_data, review_data, user_data
+    return business_data, review_data
 
 def create_tables(db):
     con = sqlite3.connect(db)
     with con:
         cursor = con.cursor()
-        '''
+        
         #Create business table
         cursor.execute("CREATE TABLE business(business_id TEXT, name TEXT, \
             address TEXT, city TEXT, state TEXT, latitude FLOAT, longitude \
             FLOAT, stars FLOAT, review_count INTEGER, is_open TEXT, type TEXT)")
-        '''
+        
         #Create attributes table ==> for business
         cursor.execute("CREATE TABLE attributes(business_id TEXT, credit_cards \
             TEXT, alcohol TEXT, attire TEXT, caters TEXT, delivery TEXT, \
@@ -87,7 +76,7 @@ def create_tables(db):
             coat_check TEXT, smoking TEXT, dogs TEXT, pool_table TEXT, \
             happy_hour TEXT, dancing TEXT, order_at_counter TEXT, byob_corkage \
             TEXT, corkage TEXT, byob TEXT, all_hours TEXT)")
-        '''
+        
         #Create neighborhoods table ==> for business
         cursor.execute("CREATE TABLE neighborhoods(business_id TEXT, \
             neighborhood TEXT)")
@@ -96,17 +85,12 @@ def create_tables(db):
         cursor.execute("CREATE TABLE categories(business_id TEXT, \
             category TEXT)")
         
-        #cursor.execute("CREATE TABLE hours()")
-        
         #Create review table
         cursor.execute("CREATE TABLE review(business_id TEXT, date TEXT, \
             review_id TEXT, stars INTEGER, text TEXT, type TEXT, \
             user_id TEXT)")
         
-        #Create votes table ==> for review
-        cursor.execute("CREATE TABLE votes(cool INTEGER, funny INTEGER, \
-            useful INTEGER)")
-        '''
+        
 #First create a database in sqlite3 called 'data.db'
 #The database cannot store all data, because some data is in dictionaries or
 #   lists: neightborhoods, attributes, categories, hours
@@ -151,7 +135,6 @@ def business_to_db(db, business_data):
                     columns.append(d[key])
                 else:  
                     columns.append(key.lower())
-                print(key)
                 values.append('"{}"'.format(value))
             columns = ", ".join(columns)
             for item in values:
@@ -159,12 +142,9 @@ def business_to_db(db, business_data):
             values = ", ".join(values)
             s = "INSERT INTO attributes " + "(" + columns + ")" + \
                 " VALUES " + "(" + values + ")"
-            print(s)
-            print()
             cursor.execute(s)
             
             neighborhoods = dictionary['neighborhoods']
-            #columns = ['business_id', 'neighborhood']
             for place in neighborhoods:
                 values = ['"{}"'.format(dictionary['business_id']), \
                     '"{}"'.format(place)]
@@ -174,7 +154,6 @@ def business_to_db(db, business_data):
                 cursor.execute(s)
                 
             categories = dictionary['categories']
-            #columns = ['business_id', 'category']
             for category in categories:
                 values = ['"{}"'.format(dictionary['business_id']), \
                     '"{}"'.format(category)]
@@ -182,62 +161,23 @@ def business_to_db(db, business_data):
                 s = "INSERT INTO categories (business_id, category) VALUES (" \
                     + values + ")"
                 cursor.execute(s)
-            
-            
-            #Tables remaining to be created:\hours
         
-
-        #Need: ambience, good_for, parking, best_nights, 
         
 def review_to_db(db, review_data):
     con = sqlite3.connect(db)
     with con:
         cursor = con.cursor()
-        columns = []
-        items = []
         for review in review_data:
+            columns = []
+            items = []
             for key, value in review.items():
-                if key == 'votes':
+                if key == 'votes' or key == 'type':
                     continue
                 else:
                     columns.append(key)
                     items.append(value)
             columns = ", ".join(columns)
-            items = ", ".join(items)
             s = "INSERT INTO review " + "(" + columns + ")" + \
-                    " VALUES " + "(" + values + ")"
-            cursor.execute(s)
-                    
-            columns = []
-            items = []
-            votes = review['votes']
-            c = votes['cool']
-            f = votes['funny']
-            s = 'INSERT INTO votes (cool, funny, useful) VALUES (?,?,?)'
-            cursor.execute(s, (dictionary['cool'], dictionary['funny'], \
-                dictionary['useful']))
-            
-            
-def user_to_db(db, user_data):
-    con = sqlite3.connect(db)
-    with con:
-        cursor = con.cursor()
-        '''
-        compliments <class 'dict'>
-        name <class 'str'>
-        votes <class 'dict'>
-        yelping_since <class 'str'>
-        average_stars <class 'float'>
-        type <class 'str'>
-        friends <class 'list'>
-        review_count <class 'int'>
-        fans <class 'int'>
-        user_id <class 'str'>
-        elite <class 'list'>
-        '''
-        
-        #Create user table
-        cursor.execute("CREATE TABLE user()")
-        
-        cursor.exectue("CREATE TABLE ")
-        
+                    " VALUES (?,?,?,?,?,?)"
+            cursor.execute(s, (items[0], items[1], items[2], items[3], items[4], \
+                items[5]))
