@@ -34,6 +34,8 @@ A project for CMSC 12200 - Computer Science with Applications II - University of
 		- scraping
 			- scraping.py
 		- yelp_rec_django
+		- final_project.py - MASTER FILE
+		- requirements.txt - List of required libraries
 	- Preliminary
 		- Arif-Chuang-Hori-Teehan Proposal.pdf
 		- Outline of Yelp API
