@@ -27,7 +27,6 @@ Yelp provided functions:
 
 import json
 import sqlite3
-import ast
 
 def import_json_data():
     

@@ -6,7 +6,6 @@ Project uses Google Calendar, Maps and OAuth API.
 #Required packages:
 json
 sqlite3
-ast
 operator
 pandas
 sklearn
