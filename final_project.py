@@ -1,7 +1,7 @@
 import sys
-import algorithms/overlap
-import data/json_to_sql
-import scraping/scraping
+import algorithms.overlap
+import data.json_to_sql
+import scraping.scraping
 
 #Take user input
 def find_correct_biz():
