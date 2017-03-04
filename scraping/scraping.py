@@ -24,13 +24,38 @@ class business:
 		Uses the Yelp API to obtain basic information about a business. 
 		'''
 		biz = client.get_business(biz_id).business
+		
 		self.biz_name = biz.name
 		self.biz_id = biz.id
-		self.address = biz.location.address[0] + \
-			biz.location.city + biz.location.state_code
+		#self.address = biz.location.address[0] + \
+			#biz.location.city + biz.location.state_code
+		self.address = ' '.join((biz.location.address[0], 
+			biz.location.city, biz.location.state_code))
 		self.review_count = biz.review_count
 		self.rating = biz.rating
 		self.url = biz.url.split('?')[0] + '?'
+		self.attrs = {}
+		self.scrape_biz_attributes()
+
+
+	def scrape_biz_attributes(self):
+		url = self.url
+		
+		html = pm.urlopen(url=url, method="GET").data
+		soup = bs4.BeautifulSoup(html, "html.parser")
+
+		attrs = soup.find_all('dt', class_='attribute-key')[2:]
+
+		for attr in attrs:
+			attribute = attr.text.strip()
+			value = attr.find_next().text.strip()
+			
+			if value == 'Yes':
+				value = True
+			elif value == 'No':
+				value = False
+
+			self.attrs[attribute] = value
 
 
 def find_intended_restaurant(name, loc):
@@ -58,26 +83,17 @@ def scrape_biz_reviews(biz_id):
 	Example usage: reviews = scrape_biz_reviews('medici-on-57th-chicago')
 	'''
 	review_list = []
+	user_set = set()
 
 	biz = business(biz_id)
-
-	if biz.review_count <= MAX_REVIEWS:
-		pages = range(0, biz.review_count, 20)
-	else:
-		pages = range(0, MAX_REVIEWS, 20)
-
+	threshold = biz.rating // 1
+	pages = range(0, biz.review_count, 20)
 
 	for page in pages:
 		url = biz.url + 'start={}'.format(page)
 		
 		html = pm.urlopen(url=url, method="GET").data
 		soup = bs4.BeautifulSoup(html, "html.parser")
-
-		# Only scraping English reviews
-		'''
-		reviews = soup.find_all('p', lang='en')
-		review_dates = soup.find_all('span', class_="rating-qualifier")
-		'''
 
 		rev_data = soup.find_all('div', itemprop='review')
 		users = soup.find_all('div', class_='review review--with-sidebar')
@@ -87,49 +103,28 @@ def scrape_biz_reviews(biz_id):
 		for i in range(0, len(rev_data)):
 			review_dict = {}
 
-			review_dict['text'] = rev_data[i].find('p', \
-				itemprop='description').text.strip()
+			stars = float(rev_data[i].find('meta', 
+				itemprop='ratingValue')['content'])
+			if stars >= threshold:
 
-			review_dict['date'] = rev_data[i].find('meta', \
-				itemprop='datePublished')['content']
+				review_dict['biz_id'] = biz.biz_id
 
-			stars = rev_data[i].find('meta', itemprop='ratingValue')['content']
-			review_dict['stars'] = float(stars)
+				review_dict['text'] = rev_data[i].find('p', \
+					itemprop='description').text.strip()
 
-			review_dict['user_id'] = users[i]['data-signup-object'].split(':')[1]
+				review_dict['date'] = rev_data[i].find('meta', \
+					itemprop='datePublished')['content']
 
-			review_list.append(review_dict)
-			'''
-			if len(date.attrs['class']) > 1:
-				continue 
+				review_dict['stars'] = float(stars)
 
-			is_updated = date.find_all('small')
-			if is_updated:
-				if is_updated[0].text == 'Previous review':
-					continue 
-				else:
-					date_list.append(date.text.strip().split('\n')[0])
-			else:
-				date_list.append(date.text.strip())
+				user_id = users[i]['data-signup-object'].split(':')[1]
+				review_dict['user_id'] = user_id
+				user_set.add(user_id)
 
-
-
-		for i in range(0, len(reviews)):
-
-			review_dict = {}				
-
-
-			rev_text = reviews[i].get_text(separator=' ')
-
-			review_dict['text'] = rev_text
-
-			review_dict['date'] = date_list[i]
-
-			review_list.append(review_dict)
-		'''
-
-	return review_list
-
+				review_list.append(review_dict)
+				
+				if len(review_list) >= MAX_REVIEWS:
+					return biz.__dict__, review_list, user_set 
 
 
 
@@ -142,11 +137,6 @@ def scrape_user_reviews(user_id):
 		for one review. 
 	'''
 	pass
-
-
-def scrape_biz_attributes():
-	pass
-	
 
 
 def scrape_biz_basics(biz_id):
