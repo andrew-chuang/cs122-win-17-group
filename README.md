@@ -2,27 +2,7 @@
 
 A project for CMSC 12200 - Computer Science with Applications II - University of Chicago
 
-Required APIs:
-- Google Calendar
-- Google Maps
-- OAuth
-
-Required packages:
-- json
-- sqlite3
-- operator
-- pandas
-- sklearn
-- gensim
-- httplib2
-- googleapiclient
-- os
-- googlemaps
-- bs4
-- urllib3
-- re
-- yelp
-- sys
+Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 
 Hierarchy
 - Project
@@ -45,3 +25,8 @@ Hierarchy
 	- googleapiwork.txt
 - .gitignore
 - README.md - This file
+
+Required APIs:
+- Google Calendar
+- Google Maps
+- OAuth
