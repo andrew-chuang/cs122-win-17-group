@@ -49,7 +49,7 @@ class business:
 		for attr in attrs:
 			attribute = attr.text.strip()
 			value = attr.find_next().text.strip()
-			
+
 			if value == 'Yes':
 				value = True
 			elif value == 'No':
@@ -136,7 +136,35 @@ def scrape_user_reviews(user_id):
 	Returns: List of dictionaries, each dictionary containing information 
 		for one review. 
 	'''
-	pass
+	url = 'https://www.yelp.com/user_details_reviews_self?'\
+		'userid={}&rec_pagestart={}'
+
+	html = pm.urlopen(url=url.format(user_id, 0), method="GET").data
+	soup = bs4.BeautifulSoup(html, "html.parser")
+
+	rev_count = soup.find_all('li', 
+		class_='review-count')[0].text.strip().split(' ')[0]
+
+	pages = range(0, int(rev_count), 10)
+
+	for page in pages:
+		html = pm.urlopen(url=url.format(user_id, page), method="GET").data
+		soup = bs4.BeautifulSoup(html, "html.parser")
+
+		rev_data = soup.find_all('div', class_='review-content')
+
+		for i in range(0, len(rev_data)):
+			review_dict = {}
+
+			stars = float(rev_data.find_all('div', 
+				class_='i-stars')[i]['title'].split(' ')[0])
+
+			if stars > 3.0:
+				review_dict['biz_id'] = soup.find_all('a', 
+					class_='biz-name')[i]['href'].split('/')[2]
+
+
+	return rev_data
 
 
 def scrape_biz_basics(biz_id):
