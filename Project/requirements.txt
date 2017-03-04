@@ -1,0 +1,17 @@
+Required Packages:
+
+json
+sqlite3
+operator
+pandas
+sklearn
+gensim
+httplib2
+googleapiclient
+os
+googlemaps
+bs4
+urllib3
+re
+yelp
+sys
