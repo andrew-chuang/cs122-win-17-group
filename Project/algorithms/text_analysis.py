@@ -10,6 +10,7 @@ from collections import defaultdict
 
 # include sql calls for text data, should return a list where each entry is the text of a review
 
+# LSI
 
 def tokenize_to_vect(doc_list):
     '''
@@ -19,9 +20,9 @@ def tokenize_to_vect(doc_list):
          corpora
     '''
     stoplist = set('for a of the and to in'.split())
-    text_lists = [[word for word in document.lower().split() if word not in stoplist] for document in documents]
+    text_lists = [[word for word in document.lower().split() if word not in stoplist] for document in doc_list]
     freq = defaultdict(int)
-    for text in test_lists:
+    for text in text_lists:
         for k in text:
             freq[k] += 1
     attribute_list = ["service", "quality", "romantic", "atmosphere"]
@@ -56,5 +57,7 @@ def similarity_scoring(training_docs, test_doc):
     sorted_sims = sims = sorted(enumerate(sims), key=lambda item: -item[1])
     return sorted_sims
     
+# make sure there is a record of which restaurant goes with which document in doc list
+# make sure that training docs are each a long string of all the reviews for a given restaurant
 
-    
+# LDA
