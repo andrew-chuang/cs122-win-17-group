@@ -1,6 +1,3 @@
-json
-sqlite3
-operator
 pandas
 sklearn
 gensim
