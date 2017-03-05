@@ -4,13 +4,14 @@ import json
 import re
 from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
+urllib3.disable_warnings()
 
 MAX_REVIEWS = 50
 
 pm = urllib3.PoolManager()
 
 # read API keys
-with open('config_secret.json') as cred:
+with open('scraping/config_secret.json') as cred:
     creds = json.load(cred)
     auth = Oauth1Authenticator(**creds)
     client = Client(auth)
@@ -168,8 +169,12 @@ def scrape_user_reviews(user_id):
 
 				review_dict['stars'] = stars
 
-				review_dict['text'] = rev_data[i].find_all('p', 
-					lang='en')[0].text
+				text = rev_data[i].find_all('p', 
+					lang='en')
+				if text:
+					review_dict['text'] = text[0].text
+
+				print('=========================', user_id)
 
 
 				review_list.append(review_dict)
