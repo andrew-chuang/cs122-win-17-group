@@ -131,11 +131,12 @@ def scrape_biz_reviews(biz_id):
 def scrape_user_reviews(user_id):
 	'''
 	Given a user ID, scrapes all of the user's reviews. Includes: 
-		user ID, date, business ID, stars, text. 
+		user ID, business ID, stars, text. 
 
 	Returns: List of dictionaries, each dictionary containing information 
 		for one review. 
 	'''
+	review_list = []
 	url = 'https://www.yelp.com/user_details_reviews_self?'\
 		'userid={}&rec_pagestart={}'
 
@@ -153,18 +154,27 @@ def scrape_user_reviews(user_id):
 
 		rev_data = soup.find_all('div', class_='review-content')
 
-		for i in range(0, len(rev_data)):
+		for i in range(1, len(rev_data), 2):
 			review_dict = {}
 
-			stars = float(rev_data.find_all('div', 
-				class_='i-stars')[i]['title'].split(' ')[0])
+			stars = float(rev_data[i].find_all('div', 
+				class_='i-stars')[0]['title'].split(' ')[0])
 
 			if stars > 3.0:
+				review_dict['user_id'] = user_id
+
 				review_dict['biz_id'] = soup.find_all('a', 
-					class_='biz-name')[i]['href'].split('/')[2]
+					class_='biz-name')[(i-1)//2]['href'].split('/')[2]
+
+				review_dict['stars'] = stars
+
+				review_dict['text'] = rev_data[i].find_all('p', 
+					lang='en')[0].text
 
 
-	return rev_data
+				review_list.append(review_dict)
+
+	return review_list
 
 
 def scrape_biz_basics(biz_id):
