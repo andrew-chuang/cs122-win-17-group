@@ -37,10 +37,10 @@ def scrape_data(user_input):
         biz_reviews += b_reviews
         business_data.append(biz_reviews)
         for user_id in user_list:
-            print("======================", user_id)
             u_reviews = scraping.scraping.scrape_user_reviews(user_id)
             user_reviews += u_reviews
     return business_data, biz_reviews, user_reviews
+
 
 
 #Convert the data into a sql database
