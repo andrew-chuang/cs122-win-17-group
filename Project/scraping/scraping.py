@@ -174,10 +174,12 @@ def scrape_user_reviews(user_id):
 				if text:
 					review_dict['text'] = text[0].text
 
-				#print('=========================', user_id)
-
+				print('=========================', review_dict['business_id'])
 
 				review_list.append(review_dict)
+
+				#if len(review_list) >= MAX_REVIEWS:
+
 
 	return review_list
 
