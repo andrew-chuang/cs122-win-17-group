@@ -81,13 +81,14 @@ def similarity_scoring(training_docs, test_doc):
     score = score / len(sim)
     return score
     
-def get_similarities(training_docs, target_reviews):
+def get_similarities(training_docs, target_reviews, user_reviews):
     '''
     '''
     score_list = []
     for i in range(len(target_reviews)):
         score = similarity_scoring(training_docs, target_reviews[i])
-        score_list.append((i, score))
+        score_list.append((user_reviews["business_id"][i], score))
+    score_list = sorted(score_list, key = lambda k: -k[1])
 
     return score_list
 # make sure there is a record of which restaurant goes with which document in doc list
