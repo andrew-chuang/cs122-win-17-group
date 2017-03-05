@@ -6,7 +6,8 @@ from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 urllib3.disable_warnings()
 
-MAX_REVIEWS = 50
+MAX_BIZ_REV = 50
+MAX_USER_REV = 10
 
 pm = urllib3.PoolManager()
 
@@ -124,7 +125,7 @@ def scrape_biz_reviews(business_id):
 
 				review_list.append(review_dict)
 				
-				if len(review_list) >= MAX_REVIEWS:
+				if len(review_list) >= MAX_BIZ_REV:
 					return biz.__dict__, review_list, user_set 
 
 
@@ -176,7 +177,7 @@ def scrape_user_reviews(user_id):
 
 				review_list.append(review_dict)
 
-				if len(review_list) >= MAX_REVIEWS:
+				if len(review_list) >= MAX_USER_REV:
 					return review_list
 
 

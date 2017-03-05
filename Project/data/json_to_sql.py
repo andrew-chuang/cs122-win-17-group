@@ -84,9 +84,8 @@ def create_tables(db):
             category TEXT)")
         '''
         #Create biz_reviews table
-        cursor.execute("CREATE TABLE biz_reviews(business_id TEXT, \
-            review_id TEXT, stars INTEGER, text TEXT, type TEXT, \
-            user_id TEXT)")
+        cursor.execute("CREATE TABLE biz_reviews(business_id TEXT, stars INTEGER, \
+            text TEXT, user_id TEXT)")
         
         #Create user_reviews table
         cursor.execute("CREATE TABLE user_reviews(business_id TEXT, \
