@@ -1,5 +1,17 @@
-import sys
+#                        Arif-Chuang-Hori-Teehan
+#                            Salman Arif
+#                            Andrew Chuang
+#                            Jonathan Hori
+#                            Ryan Teehan
+#    
+#                        Yelp Recommendation Engine
+#                            CMSC 12200
+#                            Winter 2017
+#
+###############################################################################
+
 import algorithms.overlap
+import algorithms.text_analysis
 import data.json_to_sql
 import scraping.scraping
 
@@ -9,7 +21,7 @@ def find_correct_biz():
 
 
 #Scrape the data
-def scrape_data():
+def scrape_data(user_input):
     '''
     Returns:
             biz_reviews - list of dictionaries, each dictionary is a review 
@@ -20,12 +32,12 @@ def scrape_data():
     biz_reviews = []
     user_reviews = []
     business_data = []
-    for restaurant in user_input:
-        biz_data, b_reviews, user_list = scraping.scrape_biz_reviews(biz_id)
+    for biz_id in user_input:
+        biz_data, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
         biz_reviews += b_reviews
         business_data.append(biz_reviews)
-        for user in user_list:
-            u_reviews = scraping.scrape_user_reviews(user_id)
+        for user_id in user_list:
+            u_reviews = scraping.scraping.scrape_user_reviews(user_id)
             user_reviews += u_reviews
     return business_data, biz_reviews, user_reviews
 
@@ -42,6 +54,7 @@ def convert_to_sql(business_data, biz_reviews, user_reviews, database):
 
 #Run algorithms
 def run_algorithms():
+    #Ryan will add sql call within his algorithms to get the pandas df from db
     pass
 
 #Sort and filter results
