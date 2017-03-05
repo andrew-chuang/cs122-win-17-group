@@ -1,5 +1,3 @@
-Required Packages:
-
 json
 sqlite3
 operator
