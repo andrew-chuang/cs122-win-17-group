@@ -72,15 +72,21 @@ def convert_to_sql(business_data, biz_reviews, user_reviews, database):
      
 
 #Run algorithms
-def run_algorithms():
-    #Ryan will add sql call within his algorithms to get the pandas df from db
-    pass
+def run_algorithms(database):
+    '''
+    Inputs:
+            database - completed from convert_to_sql
+    '''
+    biz_data, biz_reviews, user_reviews = algorithms.text_analysis.sql_to_df(database)
+    #intersections = algorithms.overlap.count_intersections()
+    similarity_list = algorithms.text_analysis.get_similarities(biz_reviews, user_reviews)
+    return similarity_list
 
 #Sort and filter results
 
 #Display in Django
-'''
+
 def go(user_input, db):
     bd, br, ur = scrape_data(user_input)
     convert_to_sql(bd, br, ur, db)
-'''
+    l = run_algorithms(db)

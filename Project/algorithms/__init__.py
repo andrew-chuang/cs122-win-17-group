@@ -1,1 +1,1 @@
-__all__ = ['overlap']
+__all__ = ['overlap', 'text_analysis']
