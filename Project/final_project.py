@@ -14,7 +14,14 @@ import algorithms.overlap
 import algorithms.text_analysis
 import data.json_to_sql
 import scraping.scraping
-
+'''
+class DataCount:
+    data_count = 0
+    
+    def __init__(self):
+        self.data_count += 1
+        #self.data_count = count
+'''    
 #Take user input
 def find_correct_biz():
     pass
@@ -32,10 +39,13 @@ def scrape_data(user_input):
     biz_reviews = []
     user_reviews = []
     business_data = []
+    bd = None
     for biz_id in user_input:
         biz_data, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
         biz_reviews += b_reviews
-        business_data.append(biz_reviews)
+        if biz_data != bd:
+            business_data.append(biz_data)
+            bd = biz_data
         for user_id in user_list:
             u_reviews = scraping.scraping.scrape_user_reviews(user_id)
             if u_reviews:
@@ -43,15 +53,22 @@ def scrape_data(user_input):
     return business_data, biz_reviews, user_reviews
 
 
-
 #Convert the data into a sql database
 def convert_to_sql(business_data, biz_reviews, user_reviews, database):
     '''
+    Inputs:
+            business_data, biz_reviews, user_reviews - from scraped Yelp pages
+            database - unique .db filename as a string
+        
+    Returns:
+            Nothing. Database file is now updated
     '''
-    create_tables(database)
-    business_to_db(database, business_data)
-    review_to_db(database, biz_reviews, 'biz_reviews')
-    review_to_db(database, user_reviews, 'user_reviews')
+    #count = DataCase()
+    #count.data_count += 1
+    data.json_to_sql.create_tables(database)
+    data.json_to_sql.business_to_db(database, business_data)
+    data.json_to_sql.review_to_db(database, biz_reviews, 'biz_reviews')
+    data.json_to_sql.review_to_db(database, user_reviews, 'user_reviews')
      
 
 #Run algorithms
@@ -62,3 +79,8 @@ def run_algorithms():
 #Sort and filter results
 
 #Display in Django
+'''
+def go(user_input, db):
+    bd, br, ur = scrape_data(user_input)
+    convert_to_sql(bd, br, ur, db)
+'''
