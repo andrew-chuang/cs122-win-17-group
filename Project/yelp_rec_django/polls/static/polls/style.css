@@ -1,8 +1,14 @@
+h1 a {
+    color: #D32323;
+}
+
 li a {
-    color: green;
+    color: #D32323;
 }
 
 
 body {
     background: white url("images/background.gif") no-repeat right bottom;
+    padding-left: 15px;
 }
+
