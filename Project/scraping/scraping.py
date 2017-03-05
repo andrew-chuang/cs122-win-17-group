@@ -174,7 +174,7 @@ def scrape_user_reviews(user_id):
 				if text:
 					review_dict['text'] = text[0].text
 
-				print('=========================', user_id)
+				#print('=========================', user_id)
 
 
 				review_list.append(review_dict)
