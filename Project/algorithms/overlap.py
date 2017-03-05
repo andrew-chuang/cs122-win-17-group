@@ -13,14 +13,8 @@ from math import sqrt, erf, log
 # weighting functions to try out
 
 
-# normal cdf function
-def weighting1(x, u, s):
-    '''
-    '''
-    return  (1 / 2) * (1 + erf(log(x) /(.25 * sqrt(2))))
-
 #lognormal cdf function
-def weighting2(x, u, s):
+def weighting(x, u, s):
     '''
     '''
     return  (1 / 2) * (1 + erf((x - u)/(log(s) * sqrt(2))))
@@ -47,7 +41,7 @@ def count_intersections(df):
 
     for key, value in count_dict.items():
         value = value / sum
-        weighting2(value, 0 , .125)
+        weighting(value, 0 , .125)
     
     rests_sorted =  sorted(count_dict.items(), key=op.itemgetter(1), reverse = True)
     
