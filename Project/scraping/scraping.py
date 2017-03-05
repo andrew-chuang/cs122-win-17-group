@@ -176,10 +176,8 @@ def scrape_user_reviews(user_id):
 
 				review_list.append(review_dict)
 
-				#if len(review_list) >= MAX_REVIEWS:
-
-
-	return review_list
+				if len(review_list) >= MAX_REVIEWS:
+					return review_list
 
 
 def scrape_biz_basics(business_id):
