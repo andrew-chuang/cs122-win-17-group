@@ -79,7 +79,7 @@ def similarity_scoring(training_docs, test_doc):
     for s in sim:
         score += s
     score = score / len(sim)
-    return sim
+    return score
     
 def get_similarities(training_docs, target_reviews):
     '''
