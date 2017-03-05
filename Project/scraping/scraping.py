@@ -19,14 +19,14 @@ with open('config_secret.json') as cred:
 
 class business:
 
-	def __init__(self, biz_id):
+	def __init__(self, business_id):
 		'''
 		Uses the Yelp API to obtain basic information about a business. 
 		'''
-		biz = client.get_business(biz_id).business
+		biz = client.get_business(business_id).business
 		
-		self.biz_name = biz.name
-		self.biz_id = biz.id
+		self.name = biz.name
+		self.business_id = biz.id
 		#self.address = biz.location.address[0] + \
 			#biz.location.city + biz.location.state_code
 		self.address = ' '.join((biz.location.address[0], 
@@ -34,7 +34,7 @@ class business:
 		self.review_count = biz.review_count
 		self.rating = biz.rating
 		self.url = biz.url.split('?')[0] + '?'
-		self.attrs = {}
+		self.attributes = {}
 		self.scrape_biz_attributes()
 
 
@@ -44,9 +44,9 @@ class business:
 		html = pm.urlopen(url=url, method="GET").data
 		soup = bs4.BeautifulSoup(html, "html.parser")
 
-		attrs = soup.find_all('dt', class_='attribute-key')[2:]
+		attributes = soup.find_all('dt', class_='attribute-key')[2:]
 
-		for attr in attrs:
+		for attr in attributes:
 			attribute = attr.text.strip()
 			value = attr.find_next().text.strip()
 
@@ -55,7 +55,7 @@ class business:
 			elif value == 'No':
 				value = False
 
-			self.attrs[attribute] = value
+			self.attributes[attribute] = value
 
 
 def find_intended_restaurant(name, loc):
@@ -72,7 +72,7 @@ def find_intended_restaurant(name, loc):
 
 
 
-def scrape_biz_reviews(biz_id):
+def scrape_biz_reviews(business_id):
 	'''
 	Given a business ID, scrapes all reviews for the business. Includes:
 		user ID, date, stars, text. 
@@ -85,7 +85,7 @@ def scrape_biz_reviews(biz_id):
 	review_list = []
 	user_set = set()
 
-	biz = business(biz_id)
+	biz = business(business_id)
 	threshold = biz.rating // 1
 	pages = range(0, biz.review_count, 20)
 
@@ -107,7 +107,7 @@ def scrape_biz_reviews(biz_id):
 				itemprop='ratingValue')['content'])
 			if stars >= threshold:
 
-				review_dict['biz_id'] = biz.biz_id
+				review_dict['business_id'] = biz.business_id
 
 				review_dict['text'] = rev_data[i].find('p', \
 					itemprop='description').text.strip()
@@ -163,7 +163,7 @@ def scrape_user_reviews(user_id):
 			if stars > 3.0:
 				review_dict['user_id'] = user_id
 
-				review_dict['biz_id'] = soup.find_all('a', 
+				review_dict['business_id'] = soup.find_all('a', 
 					class_='biz-name')[(i-1)//2]['href'].split('/')[2]
 
 				review_dict['stars'] = stars
@@ -177,11 +177,11 @@ def scrape_user_reviews(user_id):
 	return review_list
 
 
-def scrape_biz_basics(biz_id):
+def scrape_biz_basics(business_id):
 	'''
 	Given a business ID, scrapes basic information. 
 	'''
-	biz_url = make_url(biz_id = biz_id)
+	biz_url = make_url(business_id = business_id)
 
 	html = pm.urlopen(url=biz_url, method="GET").data
 	soup = bs4.BeautifulSoup(html, "html.parser")
@@ -198,15 +198,15 @@ def scrape_biz_basics(biz_id):
 
 	return (address, review_count, agg_rating)
 
-def make_url(biz_id=None, user_id=None):
+def make_url(business_id=None, user_id=None):
 	'''
 	Constructs the URL for either a business page or a user's page.
 
 	Inputs:
-		EITHER biz_id or user_id, strings
+		EITHER business_id or user_id, strings
 	'''
-	if biz_id:
-		url = 'https://www.yelp.com/biz/{}?'.format(biz_id)
+	if business_id:
+		url = 'https://www.yelp.com/biz/{}?'.format(business_id)
 
 	elif user_id:
 		url = 'https://www.yelp.com/user_details_reviews_self?'\
