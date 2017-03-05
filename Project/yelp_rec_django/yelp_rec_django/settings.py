@@ -25,7 +25,7 @@ SECRET_KEY = 'vhw(inbm4k*$*#6+=*hdu40pj!!cgshdvig3le^$i#81rbgwz0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
