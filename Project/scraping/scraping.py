@@ -4,15 +4,16 @@ import json
 import re
 from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
+from urllib3 import HTTPConnectionPool
 urllib3.disable_warnings()
 
 MAX_BIZ_REV = 50
-MAX_USER_REV = 10
+MAX_USER_REV = 15
 
 pm = urllib3.PoolManager()
 
 # read API keys
-with open('scraping/config_secret.json') as cred:
+with open('config_secret.json') as cred:
     creds = json.load(cred)
     auth = Oauth1Authenticator(**creds)
     client = Client(auth)
@@ -97,10 +98,13 @@ def scrape_biz_reviews(business_id):
 		html = pm.urlopen(url=url, method="GET").data
 		soup = bs4.BeautifulSoup(html, "html.parser")
 
+
+
 		rev_data = soup.find_all('div', itemprop='review')
 		users = soup.find_all('div', class_='review review--with-sidebar')
+		user_rev_num = soup.find_all('ul', class_="user-passport-stats")
 
-		date_list = []
+		print('----------------------')
 
 		for i in range(0, len(rev_data)):
 			review_dict = {}
@@ -121,16 +125,21 @@ def scrape_biz_reviews(business_id):
 
 				user_id = users[i]['data-signup-object'].split(':')[1]
 				review_dict['user_id'] = user_id
-				user_set.add(user_id)
+
+				user_num = int(user_rev_num[i].find('b').text)
+
+				user_set.add((user_id, user_num))
 
 				review_list.append(review_dict)
+				print('XXXXXXXXXXXXXXXXXXX', user_id)
 				
 				if len(review_list) >= MAX_BIZ_REV:
 					return biz.__dict__, review_list, user_set 
+	return biz.__dict__, review_list, user_set 
 
 
 
-def scrape_user_reviews(user_id):
+def scrape_user_reviews(user_id, count):
 	'''
 	Given a user ID, scrapes all of the user's reviews. Includes: 
 		user ID, business ID, stars, text. 
@@ -139,22 +148,27 @@ def scrape_user_reviews(user_id):
 		for one review. 
 	'''
 	review_list = []
+	#url = 'https://www.yelp.com/user_details_reviews_self?'\
+	#	'userid={}&rec_pagestart={}'
+
 	url = 'https://www.yelp.com/user_details_reviews_self?'\
-		'userid={}&rec_pagestart={}'
+	'userid={}&review_sort=rating&rec_pagestart={}'
 
-	html = pm.urlopen(url=url.format(user_id, 0), method="GET").data
-	soup = bs4.BeautifulSoup(html, "html.parser")
+	#html = pm.urlopen(url=url.format(user_id, 0), method="GET").data
+	#soup = bs4.BeautifulSoup(html, "html.parser")
 
-	rev_count = soup.find_all('li', 
-		class_='review-count')[0].text.strip().split(' ')[0]
+	#rev_count = soup.find_all('li', 
+		#class_='review-count')[0].text.strip().split(' ')[0]
 
-	pages = range(0, int(rev_count), 10)
+	pages = range(0, count, 10)
 
 	for page in pages:
 		html = pm.urlopen(url=url.format(user_id, page), method="GET").data
 		soup = bs4.BeautifulSoup(html, "html.parser")
 
 		rev_data = soup.find_all('div', class_='review-content')
+
+		print('==============================')
 
 		for i in range(1, len(rev_data), 2):
 			review_dict = {}
@@ -163,20 +177,22 @@ def scrape_user_reviews(user_id):
 				class_='i-stars')[0]['title'].split(' ')[0])
 
 			if stars > 3.0:
-				review_dict['user_id'] = user_id
-
-				review_dict['business_id'] = soup.find_all('a', 
-					class_='biz-name')[(i-1)//2]['href'].split('/')[2]
-
-				review_dict['stars'] = stars
 
 				text = rev_data[i].find_all('p', 
-					lang='en')
+						lang='en')
+
 				if text:
 					review_dict['text'] = text[0].text
 
-				review_list.append(review_dict)
+					review_dict['user_id'] = user_id
 
+					review_dict['business_id'] = soup.find_all('a', 
+						class_='biz-name')[(i-1)//2]['href'].split('/')[2]
+
+					review_dict['stars'] = stars
+					
+					review_list.append(review_dict)
+					print(review_dict['business_id'], review_dict['stars'])	
 				if len(review_list) >= MAX_USER_REV:
 					return review_list
 
