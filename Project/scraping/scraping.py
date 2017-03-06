@@ -8,6 +8,7 @@ from multiprocessing.pool import ThreadPool
 MAX_BIZ_REV = 20
 MAX_USER_REV = 20
 THREAD_SIZE = 3
+DEBUG = True
 
 # Supress warning output from urllib3
 urllib3.disable_warnings()
@@ -129,8 +130,8 @@ def scrape_biz_reviews(business_id):
 		rev_data = soup.find_all('div', itemprop='review')
 		users = soup.find_all('div', class_='review review--with-sidebar')
 		user_rev_num = soup.find_all('ul', class_="user-passport-stats")
-
-		print('----------------------')
+		if DEBUG:
+			print('----------------------')
 
 		for i in range(0, len(rev_data)):
 			review_dict = {}
@@ -160,7 +161,9 @@ def scrape_biz_reviews(business_id):
 				user_set.add((user_id, user_num))
 
 				review_list.append(review_dict)
-				print('XXXXXXXXXXXXXXXXXXX', user_id)
+				
+				if DEBUG:
+					print('XXXXXXXXXXXXXXXXXXX', user_id)
 				
 				if len(review_list) >= MAX_BIZ_REV:
 					return biz.__dict__, review_list, user_set 
@@ -199,8 +202,10 @@ def scrape_user_reviews(user_id, count):
 
 		for soup in soups:
 			rev_data = soup.find_all('div', class_='review-content')
+			
+			if DEBUG:
+				print('==============================')
 
-			print('==============================')
 			for i in range(1, len(rev_data), 2):
 				review_dict = {}
 
@@ -222,7 +227,9 @@ def scrape_user_reviews(user_id, count):
 						review_dict['stars'] = stars
 						
 						review_list.append(review_dict)
-						print(review_dict['business_id'], review_dict['stars'])	
+						
+						if DEBUG:
+							print(review_dict['business_id'], review_dict['stars'])
 					
 						if len(review_list) >= MAX_USER_REV:
 							return review_list
