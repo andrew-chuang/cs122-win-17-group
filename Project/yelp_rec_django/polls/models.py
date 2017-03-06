@@ -27,12 +27,12 @@ class Choice(models.Model):
         return self.choice_text
 
 
-class Yelp_Q(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
-
-class Yelp_C(models.Model):
-    question = models.ForeignKey(Yelp_Q, on_delete=models.CASCADE)
+class Yelp_Input(models.Model):
+    rest1 = models.CharField(max_length=200)
+    rest2 = models.CharField(max_length=200)
+    rest3 = models.CharField(max_length=200)
+    rest4 = models.CharField(max_length=200)
+    rest5 = models.CharField(max_length=200)
     choice_text = models.DateTimeField('date published')
 
     

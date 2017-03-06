@@ -142,7 +142,6 @@ def business_to_db(db, business_data):
             values = ", ".join(values)
             s = "INSERT INTO attributes " + "(" + columns + ")" + \
                 " VALUES " + "(" + values + ")"
-            print(s)
             cursor.execute(s)
             
             '''
@@ -181,6 +180,4 @@ def review_to_db(db, review_data, table):
             columns = ", ".join(columns)
             s = "INSERT INTO " + table + "(" + columns + ")" + \
                     " VALUES (?,?,?,?)"
-            print(s)
-            print(items)
             cursor.execute(s, (items[0], items[1], items[2], items[3]))
