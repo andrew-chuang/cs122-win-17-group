@@ -33,7 +33,6 @@ class business:
 		'''
 		Uses the Yelp API to obtain basic information about a business. 
 		'''
-		print('making business')
 		biz = client.get_business(business_id).business
 		
 		self.name = biz.name
@@ -52,8 +51,7 @@ class business:
 		Scrapes attributes (ex: takes reservations, delivery, parking, etc)
 			and adds them to the business instance. 
 		'''
-		url = self.url
-		html = pm.urlopen(url=url, method="GET").data
+		html = pm.urlopen(url=self.url, method="GET").data
 		soup = bs4.BeautifulSoup(html, "html.parser")
 
 		attributes = soup.find_all('dt', class_='attribute-key')[2:]
@@ -98,12 +96,16 @@ def find_intended_restaurant(name, loc):
 
 def scrape_biz_reviews(business_id):
 	'''
-	Given a business ID, scrapes all reviews for the business. Includes:
-		user ID, date, stars, text. 
+	Given a business ID, scrapes up to MAX_BIZ_REV reviews for the business. 
+	Only scrapes 'positive' reviews - reviews at/above the business's
+		average rating. 
 
-	Returns: List of dictionaries, each dictionary containing information
-		for one review. 
-
+	Returns: Tuple
+		1: biz.__dict__: namespace for the business, containing attributes
+		2: List of dictionaries, each dictionary containing information
+			for one review. Includes: user ID, date, stars, text. 
+		3: Set containing all of the user IDs and their review counts
+			corresponding to the scraped reviews. 
 	Example usage: reviews = scrape_biz_reviews('medici-on-57th-chicago')
 	'''
 	review_list = []
@@ -130,6 +132,7 @@ def scrape_biz_reviews(business_id):
 
 			stars = float(rev_data[i].find('meta', 
 				itemprop='ratingValue')['content'])
+
 			if stars >= threshold:
 
 				review_dict['business_id'] = biz.business_id
@@ -154,17 +157,25 @@ def scrape_biz_reviews(business_id):
 				
 				if len(review_list) >= MAX_BIZ_REV:
 					return biz.__dict__, review_list, user_set 
+	
 	return biz.__dict__, review_list, user_set 
 
 
 
 def scrape_user_reviews(user_id, count):
 	'''
-	Given a user ID, scrapes all of the user's reviews. Includes: 
-		user ID, business ID, stars, text. 
+	Given a user ID, scrapes up to MAX_USER_REV of the user's reviews. 
+	Only scrapes reviews with 4 or 5 stars. Uses threading to save time.
 
+	Inputs:
+		user_id: string, unique to each Yelp user
+		count: how many reviews that user has made. This is found in
+			scrape_biz_reviews. 
+	
 	Returns: List of dictionaries, each dictionary containing information 
-		for one review. 
+		for one review. Includes: user ID, business ID, stars, text. 
+
+	Example: usr_rev = scrape_user_reviews('29buG-NLQkLHwz8B2Newcw', 338)
 	'''
 	review_list = []
 
