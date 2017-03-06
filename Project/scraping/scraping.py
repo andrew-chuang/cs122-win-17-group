@@ -7,6 +7,7 @@ from multiprocessing.pool import ThreadPool
 
 MAX_BIZ_REV = 20
 MAX_USER_REV = 20
+THREAD_SIZE = 3
 
 # Supress warning output from urllib3
 urllib3.disable_warnings()
@@ -140,15 +141,17 @@ def scrape_biz_reviews(business_id):
 				review_dict['text'] = rev_data[i].find('p', \
 					itemprop='description').text.strip()
 
-				review_dict['date'] = rev_data[i].find('meta', \
-					itemprop='datePublished')['content']
+				#review_dict['date'] = rev_data[i].find('meta', \
+					#itemprop='datePublished')['content']
 
 				review_dict['stars'] = float(stars)
 
 				user_id = users[i]['data-signup-object'].split(':')[1]
 				review_dict['user_id'] = user_id
 
-				user_num = int(user_rev_num[i].find('b').text)
+				user_num = user_rev_num[i].find('li', \
+					class_="review-count responsive-small-display-inline-block")
+				user_num = int(user_num.text.strip().split(' ')[0])
 
 				user_set.add((user_id, user_num))
 
@@ -185,7 +188,7 @@ def scrape_user_reviews(user_id, count):
 
 	# Create a list of lists of 5 URLs to use for multiprocessing. 
 	urls = [url.format(user_id, i) for i in pages]
-	urls = [urls[i:i+5] for i in range(0, len(urls), 5)]
+	urls = [urls[i:i+THREAD_SIZE] for i in range(0, len(urls), THREAD_SIZE)]
 
 	for url_set in urls:
 		soups = ThreadPool(5).imap(fetch_soup, url_set)
