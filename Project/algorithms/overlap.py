@@ -31,7 +31,6 @@ def count_intersections(user_reviews):
             count_dict[i_d] = 1
         else:
             count_dict[i_d] += 1
-            total += 1
     
     # normalizes the scores so that they add to 1
     for key, value in count_dict.items():
