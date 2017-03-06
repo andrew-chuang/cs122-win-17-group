@@ -27,7 +27,10 @@ import googlemaps
 from datetime import datetime
 from googlemaps 
 
-API_KEY = 'AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q'
+# Group keys are held in a separate file for security reasons.
+# The credential function requires a CID and CIS. Can
+# be found in the client_secrets.json file as well. 
+
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 APPLICATION_NAME = "Yelp Recommender"
 
@@ -57,7 +60,7 @@ def get_credentials():
     return credentials
 
 
-def yelp_scheduler(restaurant_list, user_requests, ):
+def yelp_scheduler(restaurant_list, user_requests):
     '''
     Function takes in list of recommended restaurants and 
     returns list of dictionaries after. Hopefully list is sorted
@@ -130,7 +133,11 @@ ex_event_dict = {
 
 def calendar_selector():
     '''
-    Function tries to determine whether or not the 
+    Function tries to determine whether or not the Yelp API calendar 
+    has already been added to the users' list of calenders. 
+    If so, the calendar does not return or adjust anything. 
+    The calendar is added if the function detects that the user
+    has not produced a 
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -142,27 +149,28 @@ def calendar_selector():
         c_list.append(calendar_list_entry['id'])
 
     if not "yelp_cal" in c_list:
-        yelp_cal = {'summary': 'Yelp Calendar', 'timeZone': 'America/Chicago'}
+        yelp_cal = {'summary': 'Yelp Calendar', 'timeZone': 'America/Chicago', \
+        'id': 'yelp_cal'}
         service.calendars().insert(body=yelp_cal).execute()
 
-    return c_list
 
-############################################################################################
-
-
-def insert_event(event_dict):
+def insert_event(event_list):
     '''
+    Function inserts event into the calendar of the user. Created
+    with the help of the Quickstart.py file of the Google and by using the 
+    Google API documentation. 
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
-
-    event = service.events().insert(calendarId='primary', body=event_dict).execute()
+    
+    for event in event_list:
+        event = service.events().insert(calendarId='primary', body=event_dict).execute()
 
     status = event.get('status')
     htmlLink = event.get('htmlLink')
 
-    if status == 'confirmed' and len(htmlLink) > 43:
+    if status == 'confirmed':
         print ('confirmed')
     else:
         print ('error')
@@ -171,3 +179,4 @@ def insert_event(event_dict):
 
 if __name__ == '__main__':
     insert_event(ex_event_dict)
+
