@@ -35,7 +35,7 @@ def count_intersections(user_reviews):
     # normalizes the scores so that they add to 1
     for key, value in count_dict.items():
         value = value / len(user_reviews["business_id"])
-        weighting(value, 0 , .125)
+        value = weighting(value, 0 , .125)
     
     rests_sorted =  sorted(count_dict.items(), key=op.itemgetter(1), reverse = True)
     
