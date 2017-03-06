@@ -26,18 +26,16 @@ def count_intersections(user_reviews):
     '''
 
     count_dict = {}
-    sum = 0
     for i_d in user_reviews["business_id"]:
         if i_d not in count_dict:
             count_dict[i_d] = 1
         else:
             count_dict[i_d] += 1
-            sum += 1
-    #  normalizes the scores so that they add to 1
-    # might not be useful, not sure yet
-
+            total += 1
+    
+    # normalizes the scores so that they add to 1
     for key, value in count_dict.items():
-        value = value / sum
+        value = value / len(user_reviews["business_id"])
         weighting(value, 0 , .125)
     
     rests_sorted =  sorted(count_dict.items(), key=op.itemgetter(1), reverse = True)
