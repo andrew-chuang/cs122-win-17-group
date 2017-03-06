@@ -14,6 +14,7 @@ from math import sqrt, erf, log
 
 
 #lognormal cdf function
+#ended up not using because it makes all values the same 
 def weighting(x, u, s):
     '''
     '''
@@ -31,11 +32,11 @@ def count_intersections(user_reviews):
             count_dict[i_d] = 1
         else:
             count_dict[i_d] += 1
-    
+
     # normalizes the scores so that they add to 1
-    for key, value in count_dict.items():
-        value = value / len(user_reviews["business_id"])
-        value = weighting(value, 0 , .125)
+    for key in count_dict:
+        count_dict[key] = count_dict[key] / len(user_reviews["business_id"])
+        #count_dict[key] = weighting(count_dict[key], 0 , .125)
     
     rests_sorted =  sorted(count_dict.items(), key=op.itemgetter(1), reverse = True)
     
