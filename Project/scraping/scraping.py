@@ -6,8 +6,8 @@ from yelp.oauth1_authenticator import Oauth1Authenticator
 from multiprocessing.pool import ThreadPool
 
 MAX_BIZ_REV = 20
-MAX_USER_REV = 20
-THREAD_SIZE = 3
+MAX_USER_REV = 15
+THREAD_SIZE = 2
 DEBUG = True
 
 # Supress warning output from urllib3
@@ -37,6 +37,9 @@ class business:
 		'''
 		Uses the Yelp API to obtain basic information about a business. 
 		'''
+		if DEBUG:
+			print('Making business...', business_id)
+
 		biz = client.get_business(business_id).business
 		
 		self.name = biz.name
@@ -114,6 +117,9 @@ def scrape_biz_reviews(business_id):
 			corresponding to the scraped reviews. 
 	Example: reviews = scrape_biz_reviews('medici-on-57th-chicago')
 	'''
+	if DEBUG:
+		print('\n######### NEW BIZ ', business_id, '##########')
+
 	review_list = []
 	user_set = set()
 
@@ -130,8 +136,9 @@ def scrape_biz_reviews(business_id):
 		rev_data = soup.find_all('div', itemprop='review')
 		users = soup.find_all('div', class_='review review--with-sidebar')
 		user_rev_num = soup.find_all('ul', class_="user-passport-stats")
+		
 		if DEBUG:
-			print('----------------------')
+			print('--------SCRAPING BIZ PAGE--------')
 
 		for i in range(0, len(rev_data)):
 			review_dict = {}
@@ -163,7 +170,7 @@ def scrape_biz_reviews(business_id):
 				review_list.append(review_dict)
 				
 				if DEBUG:
-					print('XXXXXXXXXXXXXXXXXXX', user_id)
+					print('XXXXX SCRAPED REVIEW FROM ', user_id)
 				
 				if len(review_list) >= MAX_BIZ_REV:
 					return biz.__dict__, review_list, user_set 
@@ -191,6 +198,7 @@ def scrape_user_reviews(user_id, count):
 	url = 'https://www.yelp.com/user_details_reviews_self?'\
 	'userid={}&review_sort=rating&rec_pagestart={}'
 
+
 	pages = range(0, count, 10)
 
 	# Create a list of lists of 5 URLs to use for multiprocessing. 
@@ -204,7 +212,7 @@ def scrape_user_reviews(user_id, count):
 			rev_data = soup.find_all('div', class_='review-content')
 			
 			if DEBUG:
-				print('==============================')
+				print('\n========== SCRAPING USER ', user_id, ' ##########')
 
 			for i in range(1, len(rev_data), 2):
 				review_dict = {}
