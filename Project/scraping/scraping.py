@@ -8,10 +8,12 @@ from multiprocessing.pool import ThreadPool
 MAX_BIZ_REV = 50
 MAX_USER_REV = 15
 
+# Supress warning output from urllib3
 urllib3.disable_warnings()
-pm = urllib3.PoolManager()
+# Set number of connections in order to use threading
+pm = urllib3.PoolManager(num_pools=5, maxsize=10)
 
-# read API keys
+# read API keys for Yelp
 with open('config_secret.json') as cred:
     creds = json.load(cred)
     auth = Oauth1Authenticator(**creds)
@@ -47,7 +49,8 @@ class business:
 
 	def scrape_biz_attributes(self):
 		'''
-		Scrapes attributes (takes reservations, delivery, parking, etc)
+		Scrapes attributes (ex: takes reservations, delivery, parking, etc)
+			and adds them to the business instance. 
 		'''
 		url = self.url
 		html = pm.urlopen(url=url, method="GET").data
@@ -206,6 +209,7 @@ def scrape_user_reviews(user_id, count):
 					if len(review_list) >= MAX_USER_REV:
 						return review_list
 		return review_list
+
 
 def fetch_soup(url):
 	'''
