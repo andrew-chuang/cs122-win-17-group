@@ -19,22 +19,19 @@ def weighting(x, u, s):
     '''
     return  (1 / 2) * (1 + erf((x - u)/(log(s) * sqrt(2))))
 
-
-
 # counts
 
-def count_intersections(df):
+def count_intersections(user_reviews):
     '''
     '''
 
     count_dict = {}
     sum = 0
-    for user in df.columns:
-        for rest in df[i]:
-            if rest not in count_dict:
-                count_dict[rest] = 1
-            else:
-                count_dict[rest] += 1
+    for i_d in user_reviews["business_id"]:
+        if i_d not in count_dict:
+            count_dict[i_d] = 1
+        else:
+            count_dict[i_d] += 1
             sum += 1
     #  normalizes the scores so that they add to 1
     # might not be useful, not sure yet
