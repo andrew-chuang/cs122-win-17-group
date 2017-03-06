@@ -69,6 +69,7 @@ class business:
 
 ##########################################################################
 ############################### FUNCTIONS ################################
+##########################################################################
 
 
 def find_intended_restaurant(name, loc):
@@ -206,6 +207,24 @@ def scrape_user_reviews(user_id, count):
 						return review_list
 		return review_list
 
+def fetch_soup(url):
+	'''
+	Fetches the soup for a given URL. Helper function created 
+		in order to use threading/pooling. 
+	'''
+	html = pm.urlopen(url=url, method='GET').data
+	soup = bs4.BeautifulSoup(html, "html.parser")
+	return soup
+
+
+##########################################################################
+############################ UNUSED FUNCTIONS ############################
+#
+#		Wrote these and had been using them but it was easier to 
+#		obtain most of this information through the Yelp API. 
+#
+##########################################################################
+##########################################################################
 
 def scrape_biz_basics(business_id):
 	'''
