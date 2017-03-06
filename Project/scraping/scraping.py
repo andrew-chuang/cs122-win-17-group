@@ -5,8 +5,8 @@ from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 from multiprocessing.pool import ThreadPool
 
-MAX_BIZ_REV = 50
-MAX_USER_REV = 15
+MAX_BIZ_REV = 20
+MAX_USER_REV = 20
 
 # Supress warning output from urllib3
 urllib3.disable_warnings()
