@@ -85,13 +85,16 @@ def get_similarities(business_reviews, user_reviews):
     '''
     '''
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
+    users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
     score_list = []
-    for i in range(len(user_reviews["text"])):
-        score = similarity_scoring(grouped, user_reviews["text"][i])
-        score_list.append((user_reviews["business_id"][i], score))
+    for i in range(len(users_grouped.axes[0])):
+        score = similarity_scoring(grouped, users_grouped[i])
+        score_list.append((users_grouped.axes[0][i], score))
     score_list = sorted(score_list, key = lambda k: -k[1])
 
     return score_list
+
+    
 # make sure there is a record of which restaurant goes with which document in doc list
 # make sure that training docs are each a long string of all the reviews for a given restaurant
 
