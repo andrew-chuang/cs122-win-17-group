@@ -5,8 +5,8 @@ from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 from multiprocessing.pool import ThreadPool
 
-MAX_BIZ_REV = 20
-MAX_USER_REV = 15
+MAX_BIZ_REV = 1
+MAX_USER_REV = 20
 THREAD_SIZE = 2
 DEBUG = True
 
@@ -165,7 +165,7 @@ def scrape_biz_reviews(business_id):
 					class_="review-count responsive-small-display-inline-block")
 				user_num = int(user_num.text.strip().split(' ')[0])
 
-				user_set.add((user_id, user_num))
+				user_set.add((user_id, user_num, biz.business_id))
 
 				review_list.append(review_dict)
 				
@@ -179,7 +179,7 @@ def scrape_biz_reviews(business_id):
 
 
 
-def scrape_user_reviews(user_id, count):
+def scrape_user_reviews(user_id, count, biz_ref = None):
 	'''
 	Given a user ID, scrapes up to MAX_USER_REV of the user's reviews. 
 	Only scrapes reviews with 4 or 5 stars. Uses multiprocessing to save time.
@@ -188,6 +188,8 @@ def scrape_user_reviews(user_id, count):
 		user_id: string, unique to each Yelp user
 		count: how many reviews that user has made. This is found in
 			scrape_biz_reviews. 
+		biz_ref: the business ID from which this user ID was kept. Found
+			in scrape_biz_reviews
 
 	Returns: List of dictionaries, each dictionary containing information 
 		for one review. Includes: user ID, business ID, stars, text. 
@@ -223,14 +225,15 @@ def scrape_user_reviews(user_id, count):
 				if stars > 3.0:
 					text = rev_data[i].find_all('p', 
 							lang='en')
+					business_id = soup.find_all('a', 
+						class_='biz-name')[(i-1)//2]['href'].split('/')[2]
 
-					if text:
+					if text and biz_ref != business_id:
 						review_dict['text'] = text[0].text
 
 						review_dict['user_id'] = user_id
 
-						review_dict['business_id'] = soup.find_all('a', 
-							class_='biz-name')[(i-1)//2]['href'].split('/')[2]
+						review_dict['business_id'] = business_id
 
 						review_dict['stars'] = stars
 						

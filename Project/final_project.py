@@ -82,7 +82,7 @@ def scrape_data(user_input):
             u_reviews = ThreadPool(5).starmap(scraping.scraping.scrape_user_reviews, user_list[i])
             #u_reviews = scraping.scraping.scrape_user_reviews(user_id, count)
             if u_reviews:
-                user_reviews += (item for sublist in u_reviews for item in sublist)
+                user_reviews += (i for sublist in u_reviews for i in sublist)
     return business_data, biz_reviews, user_reviews
 
 
