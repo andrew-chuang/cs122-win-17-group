@@ -1,14 +1,26 @@
 import bs4
 import urllib3
 import json
+import re
 from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
-from multiprocessing.pool import ThreadPool
+from urllib3 import HTTPConnectionPool
+
+##########################################################################
+##########################################################################
+#
+#			COPY OF SCRAPING.PY BEFORE IMPLEMENTING THREADING
+# 		KEPT THIS FOR BACKUP IN CASE THREADING NEEDED TO BE REMOVED 
+#
+##########################################################################
+##########################################################################
+
+
+urllib3.disable_warnings()
 
 MAX_BIZ_REV = 50
 MAX_USER_REV = 15
 
-urllib3.disable_warnings()
 pm = urllib3.PoolManager()
 
 # read API keys
@@ -17,15 +29,9 @@ with open('config_secret.json') as cred:
     auth = Oauth1Authenticator(**creds)
     client = Client(auth)
 
-##########################################################################
-############################# BUSINESS CLASS #############################
-##########################################################################
+# client = Client(auth)
 
 class business:
-	'''
-	Holds some basic information about a business. Also scrapes the
-		attributes of business as listed on Yelp.
-	'''
 
 	def __init__(self, business_id):
 		'''
@@ -46,10 +52,8 @@ class business:
 
 
 	def scrape_biz_attributes(self):
-		'''
-		Scrapes attributes (takes reservations, delivery, parking, etc)
-		'''
 		url = self.url
+		
 		html = pm.urlopen(url=url, method="GET").data
 		soup = bs4.BeautifulSoup(html, "html.parser")
 
@@ -67,21 +71,10 @@ class business:
 			self.attributes[attribute] = value
 
 
-##########################################################################
-############################### FUNCTIONS ################################
-
-
 def find_intended_restaurant(name, loc):
 	'''
-	Returns the top 4 results given by the Yelp Search API for the given
+	Returns the top 5 results given by the Yelp Search API for the given
 		restaurant name and location (neighborhood, city, zip, etc).
-
-	This is used to determine which restaurant(s) the user 'likes', 
-		because we cannot programmatically convert a name to a business ID.
-
-	Inputs:
-		name: string inputted by user (medici, harolds, etc)
-		loc: some location identifier (city, zip, etc)
 	'''
 	name = str(name)
 	location = str(loc)
@@ -163,48 +156,56 @@ def scrape_user_reviews(user_id, count):
 		for one review. 
 	'''
 	review_list = []
+	#url = 'https://www.yelp.com/user_details_reviews_self?'\
+	#	'userid={}&rec_pagestart={}'
 
 	url = 'https://www.yelp.com/user_details_reviews_self?'\
 	'userid={}&review_sort=rating&rec_pagestart={}'
 
+	#html = pm.urlopen(url=url.format(user_id, 0), method="GET").data
+	#soup = bs4.BeautifulSoup(html, "html.parser")
+
+	#rev_count = soup.find_all('li', 
+		#class_='review-count')[0].text.strip().split(' ')[0]
+
 	pages = range(0, count, 10)
 
-	urls = [url.format(user_id, i) for i in pages]
-	urls = [urls[i:i + 5] for i in range(0, len(urls), 5)]
+	for page in pages:
+		print('00000000000000000000')
 
-	for url_set in urls:
-		soups = ThreadPool(5).imap(fetch_soup, url_set)
+		html = pm.urlopen(url=url.format(user_id, page), method="GET").data
+		soup = bs4.BeautifulSoup(html, "html.parser")
 
-		for soup in soups:
-			rev_data = soup.find_all('div', class_='review-content')
+		rev_data = soup.find_all('div', class_='review-content')
 
-			print('==============================')
-			for i in range(1, len(rev_data), 2):
+		print('==============================')
 
-				review_dict = {}
+		for i in range(1, len(rev_data), 2):
+			review_dict = {}
 
-				stars = float(rev_data[i].find_all('div', 
-					class_='i-stars')[0]['title'].split(' ')[0])
+			stars = float(rev_data[i].find_all('div', 
+				class_='i-stars')[0]['title'].split(' ')[0])
 
-				if stars > 3.0:
-					text = rev_data[i].find_all('p', 
-							lang='en')
+			if stars > 3.0:
 
-					if text:
-						review_dict['text'] = text[0].text
+				text = rev_data[i].find_all('p', 
+						lang='en')
 
-						review_dict['user_id'] = user_id
+				if text:
+					review_dict['text'] = text[0].text
 
-						review_dict['business_id'] = soup.find_all('a', 
-							class_='biz-name')[(i-1)//2]['href'].split('/')[2]
+					review_dict['user_id'] = user_id
 
-						review_dict['stars'] = stars
-						
-						review_list.append(review_dict)
-						print(review_dict['business_id'], review_dict['stars'])	
-					if len(review_list) >= MAX_USER_REV:
-						return review_list
-		return review_list
+					review_dict['business_id'] = soup.find_all('a', 
+						class_='biz-name')[(i-1)//2]['href'].split('/')[2]
+
+					review_dict['stars'] = stars
+					
+					review_list.append(review_dict)
+					print(review_dict['business_id'], review_dict['stars'])	
+				if len(review_list) >= MAX_USER_REV:
+					return review_list
+	return review_list
 
 
 def scrape_biz_basics(business_id):
