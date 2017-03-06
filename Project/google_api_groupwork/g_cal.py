@@ -1,3 +1,8 @@
+# CS 122 Yelp Recommender Project
+# Arif-Chuang-Hori-Teehan
+#
+#
+
 import httplib2
 import os
 
@@ -13,15 +18,27 @@ import datetime
 import time
 import sys
 import config
+import g_config_secret
 
 import json
 from json import JSONEncoder
 
+import googlemaps 
+from datetime import datetime
+from googlemaps 
 
+API_KEY = 'AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q'
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 APPLICATION_NAME = "Yelp Recommender"
-CID = "524235097766-rphuop3n0jtp9utcallhoavm16a9miaq.apps.googleusercontent.com"
-CIS = "AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q"
+
+
+GMAPS = Client(API_KEY)
+
+
+# Following get_credentials function written using 
+# the Google API Quickstart page for syntactical help. 
+# 
+
 
 def get_credentials():
 
@@ -29,7 +46,7 @@ def get_credentials():
     credential_dir = os.path.join(home_dir, '.credentials')
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
-    cred_path = os.path.join(credential_dir,'mycroft-googlecalendar-skill.json')
+    cred_path = os.path.join(credential_dir,'client_secrets.json')
     store = oauth2client.file.Storage(cred_path)
     credentials = store.get()
 
@@ -60,12 +77,27 @@ def event_calendar_adder(schedule_list):
     Function takes in a list of dictionaries that is in the order of the 
     schedule and changes them to the correct format that needs 
     to be in place for the official Google event input. 
-    '''
 
-    event_dict = {}
+    Input:
+        schedule_list (list)
+
+    Output:
+        event_list (list)
+    '''
+    gmaps = Client(API_KEY)
+    event_list = []
+    for event in schedule_list:
+        event_dict = {}
+        event_dict['summary'] = event['restaurant']
+        rest_details = gmaps.place(event_dict['summary'])
+        event_dict['location'] = rest_details['address']
+
+
 
     
-
+# Following calendar taken from the Quickstart.py file
+# on the Google API Developers page. Used to successfully
+# test the capabilities of the Event Adding File. 
 
 ex_event_dict = {
   'summary': 'Google I/O 2015',
@@ -96,8 +128,9 @@ ex_event_dict = {
 }
 
 
-def calendar_selector(event):
+def calendar_selector():
     '''
+    Function tries to determine whether or not the 
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
