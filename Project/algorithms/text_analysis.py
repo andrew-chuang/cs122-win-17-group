@@ -217,7 +217,7 @@ def combine_scores(overlap_score, sim_score, sent_score):
 
 '''
 def scoring(business_reviews, user_reviews):
-    '''
+    
     Gets a DataFrame of restaurants and scores
 
     inputs
@@ -226,7 +226,7 @@ def scoring(business_reviews, user_reviews):
 
     returns
         scores - sorted DataFrame
-    '''
+
     overlaps = count_intersections(user_reviews)
     sims = get_similarities(business_reviews, user_reviews)
     sents = sentiment_scoring(business_reviews, user_reviews)
