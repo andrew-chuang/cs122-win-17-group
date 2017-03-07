@@ -5,6 +5,7 @@ import operator as op
 import numpy as np
 import gensim
 from collections import defaultdict 
+from textblob import TextBlob
 
 # include sql calls for text data, should return a list where each entry is the text of a review
 
@@ -24,6 +25,15 @@ def sql_to_df(database):
 
 
 def name_to_doc_num(biz_data):
+    '''
+    Creates a dictionary to match business name to document number
+
+    inputs:
+        dataframe
+
+    returns:
+        dictionary
+    '''
     d = {}
     i = 0
     for i_d in biz_data["business_id"]:
@@ -33,6 +43,8 @@ def name_to_doc_num(biz_data):
 
 def tokenize_to_vect(doc_list):
     '''
+    Takes a document list and returns a dictionary and a corpora consisting of
+    vectors 
     inputs:
          list of strings
     returns:
@@ -52,6 +64,15 @@ def tokenize_to_vect(doc_list):
 
 def apply_lsi(corp, dictionary):
     '''
+    Applies latent semantic indexing to a corpora given a dictionary 
+
+    inputs
+        corp - corpora
+        dictionary - dict
+
+    returns:   
+        lsi = LsiModel
+        corpus_lsi - transformed corpus
     '''
     tfidf = gensim.models.TfidfModel(corp)
     c_tfidf = tfidf[corp]
@@ -66,6 +87,14 @@ def list_to_test(test_corp, lsi):
 
 def similarity_scoring(training_docs, test_doc):
     '''
+    Scores a string against a list of training strings
+
+    inputs:
+        training_docs - list of strings
+        test_doc - string
+
+    returns:
+        int
     '''
     # remember to get rid of special characters
     corp, dictionary = tokenize_to_vect(training_docs)
@@ -83,6 +112,15 @@ def similarity_scoring(training_docs, test_doc):
     
 def get_similarities(business_reviews, user_reviews):
     '''
+    Gets reviews for inputted businesses and reviews from top rating users
+    and returns averaged similarity scores for comments
+
+    inputs:
+        business_reviews - dataframe
+        user_reviews - dataframe
+
+    returns:
+        score_list - dataframe
     '''
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
     users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
@@ -91,10 +129,67 @@ def get_similarities(business_reviews, user_reviews):
         score = similarity_scoring(grouped, users_grouped[i])
         score_list.append((users_grouped.axes[0][i], score))
     score_list = sorted(score_list, key = lambda k: -k[1])
+    score_frame = pd.DataFrame(score_list)
 
-    return score_list
+    return score_frame
 
+def sentiment_scoring(business_reviews, user_reviews):
+    '''
+    Returns a DataFrame of sentiment scores
+
+    inputs
+        business_reviews - DataFrame
+        user_reviews - DataFrame
+
+    returns:
+        score_frame - DataFrame
+    '''
+    grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
+    l = []
+    for text in grouped:
+        blob = TextBlob(text)
+        l.append(blob.sentiment.polarity)
+    br_array = np.array(l)
+    avg = np.mean(br_array)
+    users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
+    score_list = []
+    for i in range(len(users_grouped.axes[0])):
+        blob = TextBlob(users_grouped[i])
+        score = blob.sentiment.polarity
+        score = score - avg
+        score_list.append((users_grouped.axes[0][i], score))
     
+    score_list = sorted(score_list, key = lambda k: -k[1])
+    score_frame = pd.DataFrame(score_list)
+
+    return score_frame
+
+
+def combine_scores(sim_score, sent_score):
+    '''
+    Combines the similarity score and sentiment score
+
+    inputs
+        sim_score - DataFrame
+        sent_score - DataFrame
+    returns 
+        score_frame - DataFrame
+    '''
+    sorted_sims = sim_score.sort_values(0)
+    sorted_sents = sent_score.sort_values(0)
+    sorted_sents = sorted_sents.drop(0, 1)
+    score_frame = pd.concat([sorted_sims, sorted_sents], 1)
+    score_frame.fillna(0)
+    score_frame.columns = ['id', 'sims', 'sents']
+    score_frame = pd.concat([score_frame, .5 * score_frame.sents + score_frame.sims], 1)
+    score_frame.columns = ['id', 'sims', 'sents', 'sums']
+    score_frame.sort_values('sums')
+
+    return score_frame
+
+
+
+
 # make sure there is a record of which restaurant goes with which document in doc list
 # make sure that training docs are each a long string of all the reviews for a given restaurant
 
@@ -106,4 +201,6 @@ def get_names_and_addresses(sims, biz_data):
         name = d[x[0]]
 
     pass
-# LDA
+
+# KMeans clusering algorithm
+
