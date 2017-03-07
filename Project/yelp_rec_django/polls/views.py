@@ -1,4 +1,4 @@
-#
+# 
 #
 #
 #
@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.views import generic
 from django.shortcuts import redirect
 
-from .models import Choice, Question
+from .models import Choice, Question, Yelp_Input
 
 
 class IndexView(generic.ListView):
@@ -26,7 +26,6 @@ class IndexView(generic.ListView):
 class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
-
 
 
 class ResultsView(generic.DetailView):
@@ -52,6 +51,41 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+class YelpView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_yelp_inputs'
+
+class VerifyView(generic.DetailView):
+    model = Yelp_Input
+    template_name = 'polls/verify.html'
+
+def search(request):
+    if request.method == 'POST':
+        search_id = request.POST.get('textfield', None)
+        try:
+            user = Person.objects.get(name = search_id)
+            #do something with user
+            html = ("<H1>%s</H1>", user)
+            return HttpResponse(html)
+        except Person.DoesNotExist:
+            return HttpResponse("no such user")  
+    else:
+        return render(request, 'polls/verify.html')
+
+def second_view(request):
+    if request.method == "POST":
+        get_text = request.POST["textfield"]
+        return get_text
+
+
+
+
+
+
+
+
+
 
 
 

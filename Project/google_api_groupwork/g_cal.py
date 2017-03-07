@@ -1,3 +1,8 @@
+# CS 122 Yelp Recommender Project
+# Arif-Chuang-Hori-Teehan
+#
+#
+
 import httplib2
 import os
 
@@ -13,15 +18,30 @@ import datetime
 import time
 import sys
 import config
+import g_config_secret
 
 import json
 from json import JSONEncoder
 
+import googlemaps 
+from datetime import datetime
+from googlemaps 
+
+# Group keys are held in a separate file for security reasons.
+# The credential function requires a CID and CIS. Can
+# be found in the client_secrets.json file as well. 
 
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 APPLICATION_NAME = "Yelp Recommender"
-CID = "524235097766-rphuop3n0jtp9utcallhoavm16a9miaq.apps.googleusercontent.com"
-CIS = "AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q"
+
+
+GMAPS = Client(API_KEY)
+
+
+# Following get_credentials function written using 
+# the Google API Quickstart page for syntactical help. 
+# 
+
 
 def get_credentials():
 
@@ -29,7 +49,7 @@ def get_credentials():
     credential_dir = os.path.join(home_dir, '.credentials')
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
-    cred_path = os.path.join(credential_dir,'mycroft-googlecalendar-skill.json')
+    cred_path = os.path.join(credential_dir,'client_secrets.json')
     store = oauth2client.file.Storage(cred_path)
     credentials = store.get()
 
@@ -40,7 +60,7 @@ def get_credentials():
     return credentials
 
 
-def yelp_scheduler(restaurant_list, user_requests, ):
+def yelp_scheduler(restaurant_list, user_requests):
     '''
     Function takes in list of recommended restaurants and 
     returns list of dictionaries after. Hopefully list is sorted
@@ -60,12 +80,27 @@ def event_calendar_adder(schedule_list):
     Function takes in a list of dictionaries that is in the order of the 
     schedule and changes them to the correct format that needs 
     to be in place for the official Google event input. 
-    '''
 
-    event_dict = {}
+    Input:
+        schedule_list (list)
+
+    Output:
+        event_list (list)
+    '''
+    gmaps = Client(API_KEY)
+    event_list = []
+    for event in schedule_list:
+        event_dict = {}
+        event_dict['summary'] = event['restaurant']
+        rest_details = gmaps.place(event_dict['summary'])
+        event_dict['location'] = rest_details['address']
+
+
 
     
-
+# Following calendar taken from the Quickstart.py file
+# on the Google API Developers page. Used to successfully
+# test the capabilities of the Event Adding File. 
 
 ex_event_dict = {
   'summary': 'Google I/O 2015',
@@ -96,8 +131,13 @@ ex_event_dict = {
 }
 
 
-def calendar_selector(event):
+def calendar_selector():
     '''
+    Function tries to determine whether or not the Yelp API calendar 
+    has already been added to the users' list of calenders. 
+    If so, the calendar does not return or adjust anything. 
+    The calendar is added if the function detects that the user
+    has not produced a 
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -109,32 +149,34 @@ def calendar_selector(event):
         c_list.append(calendar_list_entry['id'])
 
     if not "yelp_cal" in c_list:
-        yelp_cal = {'summary': 'Yelp Calendar', 'timeZone': 'America/Chicago'}
+        yelp_cal = {'summary': 'Yelp Calendar', 'timeZone': 'America/Chicago', \
+        'id': 'yelp_cal'}
         service.calendars().insert(body=yelp_cal).execute()
 
-    return c_list
 
-############################################################################################
-
-
-def insert_event(event_dict):
+def insert_event(event_list):
     '''
+    Function inserts event into the calendar of the user. Created
+    with the help of the Quickstart.py file of the Google and by using the 
+    Google API documentation. 
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('calendar', 'v3', http=http)
-
-    event = service.events().insert(calendarId='primary', body=event_dict).execute()
+    
+    for event in event_list:
+        event = service.events().insert(calendarId='primary', body=event_dict).execute()
 
     status = event.get('status')
     htmlLink = event.get('htmlLink')
 
-    if status == 'confirmed' and len(htmlLink) > 43:
+    if status == 'confirmed':
         print ('confirmed')
     else:
         print ('error')
 
-##############################################################################################
+
 
 if __name__ == '__main__':
     insert_event(ex_event_dict)
+
