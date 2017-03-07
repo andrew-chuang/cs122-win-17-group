@@ -40,5 +40,7 @@ def count_intersections(user_reviews):
     
     rests_sorted =  sorted(count_dict.items(), key=op.itemgetter(1), reverse = True)
     
+    rests_sorted = pd.DataFrame(rests_sorted)
+    
     return rests_sorted
 

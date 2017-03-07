@@ -179,11 +179,11 @@ def combine_scores(sim_score, sent_score):
     sorted_sents = sent_score.sort_values(0)
     sorted_sents = sorted_sents.drop(0, 1)
     score_frame = pd.concat([sorted_sims, sorted_sents], 1)
-    score_frame.fillna(0)
+    score_frame = score_frame.fillna(0)
     score_frame.columns = ['id', 'sims', 'sents']
     score_frame = pd.concat([score_frame, .5 * score_frame.sents + score_frame.sims], 1)
     score_frame.columns = ['id', 'sims', 'sents', 'sums']
-    score_frame.sort_values('sums')
+    score_frame = score_frame.sort_values('sums', ascending = False)
 
     return score_frame
 
