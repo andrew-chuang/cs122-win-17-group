@@ -24,8 +24,22 @@
         <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
     {% endfor %}
-    <input type="submit" value="Vote" />
-</form>
+    <input type="submit" value="Submit" />
+    </form>
+
+    <form method="POST" action="/search">
+    {% csrf_token %}
+    <input type="text" name="textfield">
+
+    <button type="submit">Restaurant 1</button>
+    </form>
+
+    <form method="POST" action="/search">
+    {% csrf_token %}
+    <input type="text" name="textfield">
+
+    <button type="submit">Restaurant 2</button>
+    </form>
 
 </body>
 </html>

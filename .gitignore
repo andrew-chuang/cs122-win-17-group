@@ -2,3 +2,5 @@ config_secret.json
 client_secrets.json
 calendar.dat
 google_api_groupwork/g_config_secret
+
+Project/google_api_groupwork/g_config_secret.json

@@ -175,7 +175,7 @@ def insert_event(event_list):
     else:
         print ('error')
 
-##############################################################################################
+
 
 if __name__ == '__main__':
     insert_event(ex_event_dict)
