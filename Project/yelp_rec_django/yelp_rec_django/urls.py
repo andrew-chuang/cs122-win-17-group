@@ -20,5 +20,5 @@ from polls import views
 urlpatterns = [
     url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^feedback/$', views.second_view, name='feedback')
+    url(r'^rest1/$', views.get_rest1, name='rest1')
 ]

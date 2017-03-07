@@ -24,7 +24,11 @@
             <p>No polls are available.</p>
         {% endif %}
         
-        <a href="{% url 'polls:verify' }">Verification Page</a>
+    <form action="/rest1/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+    </form>
 
     </body>
 </html>
