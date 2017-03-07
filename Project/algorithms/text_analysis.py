@@ -111,31 +111,49 @@ def similarity_scoring(training_docs, test_doc):
     score = score / len(sim)
     return score
     
-def get_similarities(business_reviews, user_reviews):
+def get_scores(business_reviews, user_reviews):
     '''
     Gets reviews for inputted businesses and reviews from top rating users
-    and returns averaged similarity scores for comments
+    and returns DataFrames with sentiment scores and averaged similarity
+    scores
 
     inputs:
         business_reviews - dataframe
         user_reviews - dataframe
 
     returns:
-        score_list - dataframe
+        sim_frame - DataFrame
+        sent_frame - dataframe
     '''
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
+    for text in grouped:
+        blob = TextBlob(text)
+        l.append(blob.sentiment.polarity)
+    br_array = np.array(l)
+    avg = np.mean(br_array)
+
     users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
-    score_list = []
+    sim_list = []
+    sent_list = []
     for i in range(len(users_grouped.axes[0])):
-        score = similarity_scoring(grouped, users_grouped[i])
-        score_list.append((users_grouped.axes[0][i], score))
-    score_list = sorted(score_list, key = lambda k: -k[1])
-    score_frame = pd.DataFrame(score_list)
+        sim = similarity_scoring(grouped, users_grouped[i])
+        sim_list.append((users_grouped.axes[0][i], score))
 
-    return score_frame
+        blob = TextBlob(users_grouped[i])
+        sent = blob.sentiment.polarity
+        sent = score - avg
+        sent_list.append((users_grouped.axes[0][i], score))
 
+    sim_list = sorted(sim_list, key = lambda k: -k[1])
+    sent_list = sorted(sent_list, key = lambda k: -k[1])
+    
+    sim_frame = pd.DataFrame(sim_list)
+    sent_frame = pd.DataFrame(sent_list)
+
+    return sim_frame, score_frame
+'''
 def sentiment_scoring(business_reviews, user_reviews):
-    '''
+    
     Returns a DataFrame of sentiment scores
 
     inputs
@@ -144,7 +162,7 @@ def sentiment_scoring(business_reviews, user_reviews):
 
     returns:
         score_frame - DataFrame
-    '''
+    
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
     l = []
     for text in grouped:
@@ -164,7 +182,7 @@ def sentiment_scoring(business_reviews, user_reviews):
     score_frame = pd.DataFrame(score_list)
 
     return score_frame
-
+'''
 
 def combine_scores(overlap_score, sim_score, sent_score):
     '''
