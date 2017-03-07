@@ -111,9 +111,10 @@ def run_algorithms(database):
             database - completed from convert_to_sql
     '''
     biz_data, biz_reviews, user_reviews = algorithms.text_analysis.sql_to_df(database)
-    #intersections = algorithms.overlap.count_intersections()
-    similarity_list = algorithms.text_analysis.get_similarities(biz_reviews, user_reviews)
-    return similarity_list
+    intersections = algorithms.overlap.count_intersections()
+    similarities, sentiments = algorithms.text_analysis.get_scores(biz_reviews, user_reviews)
+    scores = algorithms.text_analysis.combine_scores(intersections, similarities, sentiments)
+    return scores
 
 #Sort and filter results
 
