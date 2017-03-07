@@ -73,8 +73,10 @@ def search(request):
     else:
         return render(request, 'polls/verify.html')
 
-
-
+def second_view(request):
+    if request.method == "POST":
+        get_text = request.POST["textfield"]
+        return get_text
 
 
 
