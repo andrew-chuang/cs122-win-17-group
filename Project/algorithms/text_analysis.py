@@ -6,6 +6,7 @@ import numpy as np
 import gensim
 from collections import defaultdict 
 from textblob import TextBlob
+from overlap import count_intersections
 
 # include sql calls for text data, should return a list where each entry is the text of a review
 
@@ -165,7 +166,7 @@ def sentiment_scoring(business_reviews, user_reviews):
     return score_frame
 
 
-def combine_scores(sim_score, sent_score):
+def combine_scores(overlap_score, sim_score, sent_score):
     '''
     Combines the similarity score and sentiment score
 
@@ -177,18 +178,44 @@ def combine_scores(sim_score, sent_score):
     '''
     sorted_sims = sim_score.sort_values(0)
     sorted_sents = sent_score.sort_values(0)
+    sorted_overlaps = overlap_score.sort_values(0)
+
     sorted_sents = sorted_sents.drop(0, 1)
-    score_frame = pd.concat([sorted_sims, sorted_sents], 1)
+    sorted_overlaps = sorted_overlaps.drop(0, 1)
+
+    score_frame = pd.concat([sorted_sims, sorted_sents, sorted_overlaps], 1)
     score_frame = score_frame.fillna(0)
-    score_frame.columns = ['id', 'sims', 'sents']
-    score_frame = pd.concat([score_frame, .5 * score_frame.sents + score_frame.sims], 1)
-    score_frame.columns = ['id', 'sims', 'sents', 'sums']
+    score_frame.columns = ['id', 'sims', 'sents', 'overlaps']
+
+    factor = len(score_frame.overlaps)
+    score_frame = pd.concat([score_frame, (factor // 3) * (.5 * score_frame.sents + score_frame.sims) + \
+        2 * (factor // 3) * score_frame.overlaps], 1)
+
+    score_frame.columns = ['id', 'sums', 'sims', 'sents', 'overlaps']
+
     score_frame = score_frame.sort_values('sums', ascending = False)
 
     return score_frame
 
 
+def scoring(business_reviews, user_reviews):
+    '''
+    Gets a DataFrame of restaurants and scores
 
+    inputs
+        business_reviews - DataFrame
+        user_reviews - DataFrame
+
+    returns
+        scores - sorted DataFrame
+    '''
+    overlaps = count_intersections(user_reviews)
+    sims = get_similarities(business_reviews, user_reviews)
+    sents = sentiment_scoring(business_reviews, user_reviews)
+
+    scores = combine_scores(overlaps, sims, sents)
+
+    return scores
 
 # make sure there is a record of which restaurant goes with which document in doc list
 # make sure that training docs are each a long string of all the reviews for a given restaurant
