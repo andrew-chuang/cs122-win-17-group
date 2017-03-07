@@ -60,11 +60,18 @@ class VerifyView(generic.DetailView):
     model = Yelp_Input
     template_name = 'polls/verify.html'
 
-
-def verify(request):
-    return render(request, 'polls/verify.html')
-
-
+def search(request):
+    if request.method == 'POST':
+        search_id = request.POST.get('textfield', None)
+        try:
+            user = Person.objects.get(name = search_id)
+            #do something with user
+            html = ("<H1>%s</H1>", user)
+            return HttpResponse(html)
+        except Person.DoesNotExist:
+            return HttpResponse("no such user")  
+    else:
+        return render(request, 'polls/verify.html')
 
 
 
