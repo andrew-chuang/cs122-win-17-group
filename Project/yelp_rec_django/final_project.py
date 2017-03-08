@@ -128,3 +128,5 @@ def go(user_input, db):
     bd, br, ur = scrape_data(user_input)
     convert_to_sql(bd, br, ur, db)
     l = run_algorithms(db)
+
+    return l
