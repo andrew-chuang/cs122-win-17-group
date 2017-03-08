@@ -60,7 +60,10 @@ def scrape_data(user_input):
     business_data = []
     bd = None
     for biz_id in user_input:
-        biz_data, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
+        #biz_data, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
+        
+        # ### No longer returning entire business information, just id
+        busn_id, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
         biz_reviews += b_reviews
 
         user_list = list(user_list)
@@ -73,9 +76,9 @@ def scrape_data(user_input):
         user_list = [user_list[i:i+5] for i in range(0, len(user_list), 5)]
 
         
-        if biz_data != bd:
-            business_data.append(biz_data)
-            bd = biz_data
+        if busn_id != bd:
+            business_data.append(busn_id)
+            bd = busn_id
 
         for i in range(0, len(user_list)):
             #u_reviews = ThreadPool(3).starmap(scraping.scrape_user_reviews, (usr_list[i], cnt_list[i]))
@@ -111,9 +114,10 @@ def run_algorithms(database):
             database - completed from convert_to_sql
     '''
     biz_data, biz_reviews, user_reviews = algorithms.text_analysis.sql_to_df(database)
-    #intersections = algorithms.overlap.count_intersections()
-    similarity_list = algorithms.text_analysis.get_similarities(biz_reviews, user_reviews)
-    return similarity_list
+    intersections = algorithms.overlap.count_intersections()
+    similarities, sentiments = algorithms.text_analysis.get_scores(biz_reviews, user_reviews)
+    scores = algorithms.text_analysis.combine_scores(intersections, similarities, sentiments)
+    return scores
 
 #Sort and filter results
 

@@ -1,12 +1,12 @@
 import sqlite3
 import pandas as pd
-import json
-import operator as op
+#import json
+#import operator as op
 import numpy as np
 import gensim
 from collections import defaultdict 
 from textblob import TextBlob
-from overlap import count_intersections
+#from overlap import count_intersections
 
 # include sql calls for text data, should return a list where each entry is the text of a review
 
@@ -216,9 +216,9 @@ def combine_scores(overlap_score, sim_score, sent_score):
 
     return score_frame
 
-
+'''
 def scoring(business_reviews, user_reviews):
-    '''
+    
     Gets a DataFrame of restaurants and scores
 
     inputs
@@ -227,13 +227,14 @@ def scoring(business_reviews, user_reviews):
 
     returns
         scores - sorted DataFrame
-    '''
+
     overlaps = count_intersections(user_reviews)
     sims, sents = get_scores(business_reviews, user_reviews)
 
     scores = combine_scores(overlaps, sims, sents)
 
     return scores
+'''
 
 # make sure there is a record of which restaurant goes with which document in doc list
 # make sure that training docs are each a long string of all the reviews for a given restaurant

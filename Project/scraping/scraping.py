@@ -173,9 +173,9 @@ def scrape_biz_reviews(business_id):
 					print('XXXXX SCRAPED REVIEW FROM ', user_id)
 				
 				if len(review_list) >= MAX_BIZ_REV:
-					return biz.__dict__, review_list, user_set 
+					return biz.business_id, review_list, user_set 
 	
-	return biz.__dict__, review_list, user_set 
+	return biz.business_id, review_list, user_set 
 
 
 

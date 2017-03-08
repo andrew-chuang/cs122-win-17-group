@@ -29,10 +29,9 @@ class Choice(models.Model):
 
 class Yelp_Input(models.Model):
     rest1 = models.CharField(max_length=200)
-    rest2 = models.CharField(max_length=200)
-    rest3 = models.CharField(max_length=200)
-    rest4 = models.CharField(max_length=200)
-    rest5 = models.CharField(max_length=200)
     choice_text = models.DateTimeField('date published')
+
+class Yelp(models.Model):
+    rest1 = models.CharField(max_length=200)
 
     

@@ -11,7 +11,8 @@ from django.urls import reverse
 from django.views import generic
 from django.shortcuts import redirect
 
-from .models import Choice, Question, Yelp_Input
+from .models import Question, Choice, Yelp_Input
+from .forms import YelpForm
 
 
 class IndexView(generic.ListView):
@@ -21,6 +22,20 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         """Return the last five published questions."""
         return Question.objects.order_by('-pub_date')[:5]
+
+def index(request):
+    questions=None
+    if request.GET.get('search'):
+        search = request.GET.get('search')
+        questions = search
+
+        name = request.GET.get('name')
+        query = Yelp_Input.object.create(query=search, user_id=name)
+        query.save()
+
+    return render(request, 'polls/index.html',{
+        'questions': questions,
+    })
 
 
 class DetailView(generic.DetailView):
@@ -73,12 +88,23 @@ def search(request):
     else:
         return render(request, 'polls/verify.html')
 
-def second_view(request):
-    if request.method == "POST":
-        get_text = request.POST["textfield"]
-        return get_text
+def get_rest1(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = YelpForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('verify.html')
 
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = YelpForm()
 
+    return render(request, 'index.html', {'form': form})
 
 
 
