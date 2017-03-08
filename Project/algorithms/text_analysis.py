@@ -138,12 +138,12 @@ def get_scores(business_reviews, user_reviews):
     sent_list = []
     for i in range(len(users_grouped.axes[0])):
         sim = similarity_scoring(grouped, users_grouped[i])
-        sim_list.append((users_grouped.axes[0][i], score))
+        sim_list.append((users_grouped.axes[0][i], sim))
 
         blob = TextBlob(users_grouped[i])
         sent = blob.sentiment.polarity
-        sent = score - avg
-        sent_list.append((users_grouped.axes[0][i], score))
+        sent = sent - avg
+        sent_list.append((users_grouped.axes[0][i], sent))
 
     sim_list = sorted(sim_list, key = lambda k: -k[1])
     sent_list = sorted(sent_list, key = lambda k: -k[1])
