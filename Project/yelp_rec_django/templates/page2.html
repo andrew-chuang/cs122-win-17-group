@@ -1,43 +1,55 @@
 <html>
-<h1>Welcome to the Yelp Recommendation Engine!</h1>
-<h2>CS122 Project</h2>
-<h3>Team: Arif-Chuang-Hori-Teehan</h3>
-<h4>{{current_date}}</h4>
 
 <head>
     <title>Yelp Recommendation Engine</title>
 </head>
+<h1>Yelp Recommendation Engine</h1>
+<h2>CS122 Project</h2> 
+<h3>Team: Arif-Chuang-Hori-Teehan</h3>
+<p>Page 2</p><br>
 
-<p>Enter up to four restaurant names and locations (city, state or zip code).</p>
 
-<form action="/search/" method="get">
-<table>
-  <tbody>
-  <tr>
-    <th>Restaurant Name</th>
-    <th>Restaurant Location</th> 
-  </tr>
-    <tr>
-      <td><input type="text" name="n1"><br></td>
-      <td><input type="text" name="l1"><br></td>
-    </tr>
-    <tr>
-      <td><input type="text" name="n2"><br></td>
-      <td><input type="text" name="l2"><br></td>
-    </tr>
-    <tr>
-      <td><input type="text" name="n3"><br></td>
-      <td><input type="text" name="l3"><br></td>
-    </tr>
-    <tr>
-      <td><input type="text" name="n4"><br></td>
-      <td><input type="text" name="l4"><br></td>
-    </tr>
-    <tr>
-    	<td rowspan="2" style="vertical-align:middle;"><input type="submit" value="Search"/></td>
-    </tr>
-  </tbody>
-</table>
-</form>
+{% if not dict %}
+<p>You entered no search terms!</p>
+
+  {% else %}
+  <p>You searched for:</p><br> 
+    <p>
+    {% if  dict.n1 %}
+      {{dict.n1}}
+        {% if dict.l1%}
+        in {{dict.l1}}
+        {% endif %}
+    {% endif %} </p>
+    
+    <p>
+    {% if  dict.n2 %}
+      {{dict.n2}}
+        {% if dict.l2%}
+        in {{dict.l2}}
+        {% endif %}
+    {% endif %} </p>
+
+    <p>
+    {% if  dict.n3 %}
+      {{dict.n3}}
+        {% if dict.l3%}
+        in {{dict.l3}}
+        {% endif %}
+    {% endif %} </p>
+
+    <p>
+    {% if  dict.n3 %}
+      {{dict.n3}}
+        {% if dict.l3%}
+        in {{dict.l3}}
+        {% endif %}
+    {% endif %} </p>
+
+{% endif %}
+
+
+
+
+
 </html>
-

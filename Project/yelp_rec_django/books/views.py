@@ -6,20 +6,22 @@ import datetime
 def search_form(request):
 	return render(request, 'search_form.html')
 
+def parse_search_inputs(request):
+	terms = {}
+	for i in request.GET:
+		if (request.GET[i]):
+			terms[str(i)] = str(request.GET[i])
+	print(terms)
+	return terms
+
 def search(request):
-	string = 'You searched for: {}'
-	if 'n1' in request.GET:
-		message1 = 'You searched for: %s' % request.GET['n1']
-	if 'n2':
-		pass
-	else:
-		message = 'You submitted an empty form.'
-	return HttpResponse(message)
+	terms = parse_search_inputs(request)
+	return render(request, 'page2.html', {'dict': terms})
 
 
 def current_datetime(request):
 	now = datetime.datetime.now()
-	return now
+	return render(request, 'current_datetime.html', {'current_date': now})
 
 def hours_ahead(request, offset):
 	try:
