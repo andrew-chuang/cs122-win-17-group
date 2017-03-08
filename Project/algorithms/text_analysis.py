@@ -126,6 +126,7 @@ def get_scores(business_reviews, user_reviews):
         sent_frame - dataframe
     '''
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
+    l= []
     for text in grouped:
         blob = TextBlob(text)
         l.append(blob.sentiment.polarity)
@@ -137,12 +138,12 @@ def get_scores(business_reviews, user_reviews):
     sent_list = []
     for i in range(len(users_grouped.axes[0])):
         sim = similarity_scoring(grouped, users_grouped[i])
-        sim_list.append((users_grouped.axes[0][i], score))
+        sim_list.append((users_grouped.axes[0][i], sim))
 
         blob = TextBlob(users_grouped[i])
         sent = blob.sentiment.polarity
-        sent = score - avg
-        sent_list.append((users_grouped.axes[0][i], score))
+        sent = sent - avg
+        sent_list.append((users_grouped.axes[0][i], sent))
 
     sim_list = sorted(sim_list, key = lambda k: -k[1])
     sent_list = sorted(sent_list, key = lambda k: -k[1])
@@ -228,8 +229,7 @@ def scoring(business_reviews, user_reviews):
         scores - sorted DataFrame
 
     overlaps = count_intersections(user_reviews)
-    sims = get_similarities(business_reviews, user_reviews)
-    sents = sentiment_scoring(business_reviews, user_reviews)
+    sims, sents = get_scores(business_reviews, user_reviews)
 
     scores = combine_scores(overlaps, sims, sents)
 
