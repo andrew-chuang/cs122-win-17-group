@@ -117,8 +117,16 @@ def find_intended_restaurant(name, loc):
 	'''
 	name = str(name)
 	location = str(loc)
+	results = []
 
-	results = client.search(term=name, location=loc, limit=4).businesses
+	matches = client.search(term=name, location=loc, limit=2).businesses
+
+	for biz in matches:
+		addr = ' '.join((biz.location.address[0], 
+			biz.location.city, biz.location.state_code))
+
+		results.append((biz.name, addr, biz.id))
+
 
 	return results
 

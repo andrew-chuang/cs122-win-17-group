@@ -19,9 +19,8 @@ from books import views
 
 urlpatterns = [
 	url(r'^time/$', views.current_datetime),
-	url(r'^time/plus/(\d{1,2})/$', views.hours_ahead),
-	url(r'^search-form/$', views.search_form),
+	url(r'^search-form/$', views.search),
 	url(r'^search/$', views.search),
-	url(r'^current_future/$', views.current_future),
+	url(r'^recs/$', views.recs),
 
 ]
