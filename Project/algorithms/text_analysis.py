@@ -210,7 +210,9 @@ def combine_scores(overlap_score, sim_score, sent_score):
     score_frame = pd.concat([score_frame, (factor // 3) * (.5 * score_frame.sents + score_frame.sims) + \
         2 * (factor // 3) * score_frame.overlaps], 1)
 
-    score_frame.columns = ['id', 'sums', 'sims', 'sents', 'overlaps']
+    score_frame.columns = ['id','similarity', 'sentiment', 'overlaps', 'sums']
+
+    score_frame.columns = score_frame[['id', 'sums', 'similarity', 'sentiment', 'overlaps']]
 
     score_frame = score_frame.sort_values('sums', ascending = False)
 
