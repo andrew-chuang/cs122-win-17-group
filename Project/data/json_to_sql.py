@@ -60,9 +60,8 @@ def create_tables(db):
         cursor = con.cursor()
         
         #Create business table
-        cursor.execute("CREATE TABLE business(business_id TEXT, name TEXT, \
-            address TEXT, stars FLOAT, review_count INTEGER)")
-        
+        cursor.execute("CREATE TABLE business(business_id TEXT)")
+        '''
         #Create attributes table ==> for business
         cursor.execute("CREATE TABLE attributes(business_id TEXT, credit_cards \
             TEXT, alcohol TEXT, attire TEXT, caters TEXT, delivery TEXT, \
@@ -74,7 +73,7 @@ def create_tables(db):
             coat_check TEXT, smoking TEXT, dogs TEXT, pool_table TEXT, \
             happy_hour TEXT, dancing TEXT, order_at_counter TEXT, byob_corkage \
             TEXT, corkage TEXT, byob TEXT, all_hours TEXT, neutral_restrooms TEXT)")
-        '''
+        
         #Create neighborhoods table ==> for business
         cursor.execute("CREATE TABLE neighborhoods(business_id TEXT, \
             neighborhood TEXT)")
@@ -99,15 +98,12 @@ def business_to_db(db, business_data):
     con = sqlite3.connect(db)
     with con:
         cursor = con.cursor()
-        for dictionary in business_data:
-            
-            cursor.execute("INSERT INTO business (business_id, name, address, \
-                stars, review_count) VALUES \
-                (?, ?, ?, ?, ?)", \
-                (dictionary['business_id'], dictionary['name'], \
-                dictionary['address'], dictionary['rating'], \
-                dictionary['review_count']))
-        
+        for biz_id in business_data:
+            print(biz_id)
+            s = "INSERT INTO business (business_id) VALUES (?)"
+            print(s)
+            cursor.execute(s, (biz_id,))
+    '''
             attributes = dictionary['attributes']
             columns = ['business_id']
             values = ['"{}"'.format(dictionary['business_id'])]
@@ -144,7 +140,6 @@ def business_to_db(db, business_data):
                 " VALUES " + "(" + values + ")"
             cursor.execute(s)
             
-            '''
             neighborhoods = dictionary['neighborhoods']
             for place in neighborhoods:
                 values = ['"{}"'.format(dictionary['business_id']), \
@@ -162,7 +157,7 @@ def business_to_db(db, business_data):
                 s = "INSERT INTO categories (business_id, category) VALUES (" \
                     + values + ")"
                 cursor.execute(s)
-        '''
+    '''
         
 def review_to_db(db, review_data, table):
     con = sqlite3.connect(db)
