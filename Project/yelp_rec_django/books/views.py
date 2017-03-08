@@ -10,7 +10,8 @@ def search(request):
 	string = 'You searched for: {}'
 	if 'n1' in request.GET:
 		message1 = 'You searched for: %s' % request.GET['n1']
-	if 'n2'
+	if 'n2':
+		pass
 	else:
 		message = 'You submitted an empty form.'
 	return HttpResponse(message)
