@@ -176,3 +176,18 @@ def review_to_db(db, review_data, table):
             s = "INSERT INTO " + table + "(" + columns + ")" + \
                     " VALUES (?,?,?,?)"
             cursor.execute(s, (items[0], items[1], items[2], items[3]))
+            
+def clear_tables(db, biz = True, br = True, ur = True):
+    con = sqlite3.connect(db)
+    with con:
+        cursor = con.cursor()
+        if biz:
+            cursor.execute("DELETE FROM business")
+            cursor.execute("VACUUM")
+        if br:
+            cursor.execute("DELETE FROM biz_reviews")
+            cursor.execute("VACUUM")
+        if ur:
+            cursor.execute("DELETE FROM user_reviews")
+            cursor.execute("VACUUM")
+        

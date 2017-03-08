@@ -102,7 +102,8 @@ def convert_to_sql(business_data, biz_reviews, user_reviews, database):
     '''
     #count = DataCase()
     #count.data_count += 1
-    data.json_to_sql.create_tables(database)
+    #data.json_to_sql.create_tables(database)
+    data.json_to_sql.clear_tables(database)
     data.json_to_sql.business_to_db(database, business_data)
     data.json_to_sql.review_to_db(database, biz_reviews, 'biz_reviews')
     data.json_to_sql.review_to_db(database, user_reviews, 'user_reviews')
