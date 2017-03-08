@@ -10,6 +10,7 @@
 #
 ###############################################################################
 
+
 import algorithms.overlap
 import algorithms.text_analysis
 import data.json_to_sql
@@ -114,7 +115,7 @@ def run_algorithms(database):
             database - completed from convert_to_sql
     '''
     biz_data, biz_reviews, user_reviews = algorithms.text_analysis.sql_to_df(database)
-    intersections = algorithms.overlap.count_intersections()
+    intersections = algorithms.overlap.count_intersections(user_reviews)
     similarities, sentiments = algorithms.text_analysis.get_scores(biz_reviews, user_reviews)
     scores = algorithms.text_analysis.combine_scores(intersections, similarities, sentiments)
     return scores

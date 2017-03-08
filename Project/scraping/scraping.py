@@ -1,3 +1,11 @@
+# CS 122 Win 17 
+# Arif-Chuang-Hori-Teehan
+# Yelp Recommender Scraping 
+#
+#
+#
+
+
 import bs4
 import urllib3
 import json
@@ -10,7 +18,7 @@ MAX_USER_REV = 20
 THREAD_SIZE = 3
 DEBUG = True
 
-# Supress warning output from urllib3
+# Suppress warning output from urllib3
 urllib3.disable_warnings()
 # Set number of connections in order to use threading/pooling
 pm = urllib3.PoolManager(num_pools=5, maxsize=10)
@@ -29,13 +37,17 @@ with open('config_secret.json') as cred:
 
 class business:
 	'''
-	Holds some basic information about a business. Also scrapes the
+	Class holds some basic information about a business. Also scrapes the
 		attributes of business as listed on Yelp.
 	'''
 
 	def __init__(self, business_id):
 		'''
-		Uses the Yelp API to obtain basic information about a business. 
+		Initialization uses the Yelp API to obtain the name, address, review count, 
+		rating, url and attributes of a business. 
+
+		Inputs:
+		    business_id (string) Yelp specific id for a business
 		'''
 		if DEBUG:
 			print('Making business...', business_id)
@@ -55,8 +67,13 @@ class business:
 
 	def scrape_biz_attributes(self):
 		'''
-		Scrapes attributes (ex: takes reservations, delivery, parking, etc)
+		Method scrapes restaurant attributes 
+		(ex: takes reservations, delivery, parking, etc)
 			and adds them to the business instance. 
+
+		No explicit inputs or outputs;
+		    Method makes adjustments solely to the
+		    class attributes.
 		'''
 		html = pm.urlopen(url=self.url, method="GET").data
 		soup = bs4.BeautifulSoup(html, "html.parser")
@@ -87,12 +104,16 @@ def find_intended_restaurant(name, loc):
 	Returns the top 4 results given by the Yelp Search API for the given
 		restaurant name and location (neighborhood, city, zip, etc).
 
-	This is used to determine which restaurant(s) the user 'likes', 
-		because we cannot programmatically convert a name to a business ID.
+	This is used to determine and verify which restaurant(s) the user 
+	    intended to input, because we cannot programmatically 
+	    convert a name to a business ID.
 
 	Inputs:
-		name: string inputted by user (medici, harolds, etc)
+		name: (string) restaurant name inputted by user (medici, harolds, etc)
 		loc: some location identifier (city, zip, etc)
+
+	Outputs:
+	    results (Yelp object) contains top 4 results given by Yelp Search API
 	'''
 	name = str(name)
 	location = str(loc)
@@ -109,7 +130,10 @@ def scrape_biz_reviews(business_id):
 	Only scrapes 'positive' reviews - reviews at/above the business's
 		average rating. 
 
-	Returns: Tuple
+	Inputs:
+        business_id (string): unique Yelp ID identifier for each business
+	Outputs: 
+	    (Tuple)
 		1: biz.__dict__: namespace for the business, containing attributes
 		2: List of dictionaries, each dictionary containing information
 			for one review. Includes: user ID, date, stars, text. 
@@ -269,6 +293,14 @@ def fetch_soup(url):
 def scrape_biz_basics(business_id):
 	'''
 	Given a business ID, scrapes basic information. 
+
+	Inputs: 
+	    business_id (string): unique identifier for each Yelp Business
+
+	Outputs:
+	    address
+	    review_count
+	    agg_rating
 	'''
 	biz_url = make_url(business_id = business_id)
 
@@ -290,10 +322,16 @@ def scrape_biz_basics(business_id):
 
 def make_url(business_id=None, user_id=None):
 	'''
-	Constructs the URL for either a business page or a user's page.
+	Constructs the URL for either a business page or a user's page
+	through string formatting. Yelp URLs are highly standardized, 
+	which allows URL construction through concatenation. 
 
 	Inputs:
 		EITHER business_id or user_id, strings
+
+	Output:
+        url (string) url of either business or user, depending
+        on the input to the function. 
 	'''
 	if business_id:
 		url = 'https://www.yelp.com/biz/{}?'.format(business_id)
