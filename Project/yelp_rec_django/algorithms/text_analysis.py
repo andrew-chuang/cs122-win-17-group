@@ -8,6 +8,8 @@ from collections import defaultdict
 from textblob import TextBlob
 from . import overlap
 #from overlap import count_intersections
+# some of the work from LSI was taken from the tutorials
+# here: https://radimrehurek.com/gensim/tutorial.html
 
 # include sql calls for text data, should return a list where each entry is the text of a review
 
@@ -52,13 +54,16 @@ def tokenize_to_vect(doc_list):
     returns:
          corpora
     '''
+    # creates a list of works to get rid of
     stoplist = set('for a of the and to in'.split())
     text_lists = [[word for word in document.lower().split() if word not in stoplist] for document in doc_list]
     freq = defaultdict(int)
+    # creates frequency dictionary
     for text in text_lists:
         for k in text:
             freq[k] += 1
     attribute_list = ["service", "quality", "romantic", "atmosphere"]
+    # eliminates words that only appear once or are in the attributes list
     text_list2 = [[k for k in text if freq[k] > 1 and k not in attribute_list] for text in text_lists]
     dictionary = gensim.corpora.Dictionary(text_lists)
     corp = [dictionary.doc2bow(text) for text in text_list2]
@@ -76,16 +81,13 @@ def apply_lsi(corp, dictionary):
         lsi = LsiModel
         corpus_lsi - transformed corpus
     '''
+    # creates term frequency–inverse document frequency
     tfidf = gensim.models.TfidfModel(corp)
+    # transforms the corpus of documents
     c_tfidf = tfidf[corp]
     lsi = gensim.models.LsiModel(tfidf[c_tfidf], id2word=dictionary, num_topics=50)
     corpus_lsi = lsi[c_tfidf]
     return lsi, corpus_lsi
-
-def list_to_test(test_corp, lsi):
-    '''
-    '''
-    return lsi[test_corp]
 
 def similarity_scoring(training_docs, test_doc):
     '''
@@ -104,11 +106,14 @@ def similarity_scoring(training_docs, test_doc):
     v = dictionary.doc2bow(test_doc.lower().split())
     vec_lsi = lsi[v]
     ind = gensim.similarities.MatrixSimilarity(lsi[corp])
+
+    # gets the similarity score for each document
     sim = ind[vec_lsi]
-    #sorted_sims = sorted(enumerate(sims), key=lambda item: -item[1])
     score = 0
     for s in sim:
         score += s
+
+    # averages 
     score = score / len(sim)
     return score
     
@@ -132,59 +137,52 @@ def get_scores(business_reviews, user_reviews):
     if len(grouped.axes[0]) < 2:
         grouped = business_reviews
     '''
+    # gets dictionary with overlap scores
     overlap_dict = overlap.count_intersections(user_reviews)
 
+    # gets baseline sentiment score
     l= []
-
     for text in business_reviews.text:
         blob = TextBlob(text)
         l.append(blob.sentiment.polarity)
-
     br_array = np.array(l)
     avg = np.mean(br_array)
 
+    # groups user reviews by restaurant
     users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
     
+    # gets list of tuples with scores and keywords
     score_list = []
     for i in range(len(users_grouped)):
-        #if grouped.equals(business_reviews):
-        #    sim = similarity_scoring(grouped['text'], users_grouped[i])
-        #else:
+        # similarity scoring
         sim = similarity_scoring(business_reviews.text, users_grouped[i])
+        # selects only reviews for which keywords can be generated
         if len(users_grouped[i]) > 400:
             keywords = gensim.summarization.keywords(users_grouped[i])
             keywords = keywords.split('\n')
         else:
-            keywords = "Review is too small for keywords"
-        
+            keywords = "Review is too small for keywords"  
 
-
+        # does sentiment analysis and subtracts baseline
         blob = TextBlob(users_grouped[i])
         sent = blob.sentiment.polarity
         sent = sent - avg
-        #sent_list.append((users_grouped.axes[0][i], sent))
 
         overlap_score = overlap_dict[users_grouped.axes[0][i]]
+
         score_list.append((users_grouped.axes[0][i], sim, keywords, sent, overlap_score))
 
-
-    #sim_list = sorted(sim_list, key = lambda k: -k[1])
-    #sent_list = sorted(sent_list, key = lambda k: -k[1])
-
-    
-    #sim_frame = pd.DataFrame(sim_list)
-    #sent_frame = pd.DataFrame(sent_list)
 
     score_frame = pd.DataFrame(score_list)
 
     score_frame.columns = ['id', 'sims', 'keywords', 'sents', 'overlaps']
 
+    # weights the scores by the number of restaurants
     factor = len(score_frame.overlaps)
     score_frame = pd.concat([score_frame, 2 * (factor // 3) * (.5 * score_frame.sents + score_frame.sims) + \
         (factor // 3) * score_frame.overlaps], 1)
 
     score_frame.columns = ['id','similarity', 'keywords', 'sentiment', 'overlaps', 'sums']
-
 
     score_frame = score_frame[['id', 'sums', 'keywords', 'similarity', 'sentiment', 'overlaps']]
 
