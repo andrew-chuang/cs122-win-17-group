@@ -95,7 +95,7 @@ def static_mapper(rest_list):
             marker = ('%7C{},{}'.format(lat,lon))
             marker_list += marker
         map_url = base + marker_list + key
-        print(map_url)
+        return map_url
     else:
         map_url = ('<img src = "https://maps.googleapis.com/maps/api/'
             'staticmap?center=Chicago,IL'
