@@ -5,26 +5,6 @@
 # 
 #
 
-"""
-import googlemaps 
-from datetime import datetime
-
-API_KEY = 'AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q'
-
-from googlemaps import GoogleMaps
-gmaps = GoogleMaps(API_KEY)
-
-address = 'Constitution Ave NW & 10th St NW, Washington, DC'
-lat, lng = gmaps.address_to_latlng(address)
-print lat, lng
-
-directions_result = gmaps.directions("Sydney Town Hall",
-                                     "Parramatta, NSW",
-                                     mode="transit",
-                                     departure_time=now)
-print(directions_result)
-"""
-
 import googlemaps
 import urllib
 from datetime import datetime
@@ -66,7 +46,7 @@ def get_directions(rest1, rest2):
 
     Outputs:
         dir_list (string) string of html directions 
-        between the  
+        between the restaurants in question 
     '''
     directions_obj = gmaps.directions(rest1, rest2)
     directions_obj = directions_obj[0]
