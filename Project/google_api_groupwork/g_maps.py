@@ -5,26 +5,6 @@
 # 
 #
 
-"""
-import googlemaps 
-from datetime import datetime
-
-API_KEY = 'AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q'
-
-from googlemaps import GoogleMaps
-gmaps = GoogleMaps(API_KEY)
-
-address = 'Constitution Ave NW & 10th St NW, Washington, DC'
-lat, lng = gmaps.address_to_latlng(address)
-print lat, lng
-
-directions_result = gmaps.directions("Sydney Town Hall",
-                                     "Parramatta, NSW",
-                                     mode="transit",
-                                     departure_time=now)
-print(directions_result)
-"""
-
 import googlemaps
 import urllib
 from datetime import datetime
@@ -39,8 +19,23 @@ directions = gmaps.directions('5500 S. University Ave, Chicago, IL', \
     "5300 S. Ellis Ave")
 print(geocode_result)'''
 
+def lat_lon_finder(address):
+    '''
+    Function takes address and reverse
+    geocodes the address to find a latitude and longitude. 
 
-def get_directions(rest_list):
+    Input:
+        address (string) address of restaurant
+
+    Output: 
+        lat, lon (string) coordinates of the restaurant
+    '''
+    geocode_object = gmaps.geocode(address)
+    lat = geocode_object[0]["geometry"]["location"]["lat"]
+    lon = geocode_object[0]["geometry"]["location"]["lng"]
+    return lat, lon
+
+def get_directions(rest1, rest2):
     '''
     Function takes in a list of restaurants 
     (preordered according to schedule)
@@ -50,25 +45,16 @@ def get_directions(rest_list):
         rest_list (list of restaurant addresses)
 
     Outputs:
-        dir_list (list) 
+        dir_list (string) string of html directions 
+        between the restaurants in question 
     '''
-    dir_list = []
-    for index in range(1, rest_list):
-        rest1 = rest_list[index - 1]
-        rest2 = rest_list[index]
-        directions_object = gmaps.directions(rest1, rest2)
+    directions_obj = gmaps.directions(rest1, rest2)
+    directions_obj = directions_obj[0]
 
-def direct_lines(rest_pair):
-    '''
-    Function to potentially produce a static map with
-    lines between the restaurant markers. These lines
-    do not map "directions via street" between locations, just 
-    direct lines between locations. 
-
-    Inputs:
-       rest_list
-    '''
-    pass
+    for leg in directions_obj['legs']:
+        for step in leg['steps']:
+            html_instructions = step['html_instructions']
+            print(html_instructions)
 
 
 def static_mapper(rest_list):
@@ -86,39 +72,36 @@ def static_mapper(rest_list):
     (i.e. len(address_list) == 0)
 
     Input:
-        rest_list:
+        rest_list (list) list of addresses of restaurants
+        list can be any length
 
     Output:
-        map_url (string): url that produces a map when placed in 
-        <img> tags on the Django site
+        map_url (string): url placed in HTML img that produces a map 
     '''
-    base_url = '<img src = "https://maps.googleapis.com/maps/api/staticmap?'
-    marker = "markers=color:red%7Clabel:S"
-    breaker = "%7C"
-    key = '&key='
-    end_tag = '">'
 
     if len(rest_list) == 1:
-        encode_address = urllib.parse.quote_plus(rest_list[0])
-        map_url = base_url + 'center=Chicago,IL' + '&' + marker \
-        + breaker + encode_address + key + API_KEY + end_tag
-        print(map_url)
+        lat, lon = lat_lon_finder(rest_list[0])
+        url = ('<img src = "https://maps.googleapis.com/maps/api'
+        '/staticmap?size=400x400&markers=color:blue%7Clabel:S%7C'
+        '{},{}&key={}">'.format(lat, lon, API_KEY))
+        return url
     elif len(rest_list) > 1:
-        map_list = []
+        base = ('<img src = "https://maps.googleapis.com/maps/api'
+        '/staticmap?size=400x400')
+        key = ('&key={}">'.format(API_KEY))
+        marker_list = "&markers=color:blue%7Clabel:S"
         for rest in rest_list:
-            places = ""
-            encode_rest = urllib.parse.quote_plus(rest)
-            places = places + breaker + encode_rest
-            map_url = base_url + marker + breaker + places + key + \
-            API_KEY + end_tag
-            map_list.append(map_url)
-        print(map_list) 
+            lat, lon = lat_lon_finder(rest)
+            marker = ('%7C{},{}'.format(lat,lon))
+            marker_list += marker
+        map_url = base + marker_list + key
+        print(map_url)
     else:
         map_url = ('<img src = "https://maps.googleapis.com/maps/api/'
             'staticmap?center=Chicago,IL'
             '&zoom=13&size=400x400&markers=color:blue%7C'
             'label:S%7C11211%7C11206%7C11222&key={}">'.format(API_KEY))
-        print(map_url)
+        return map_url
 
 
 def photo_producer(rest):
@@ -145,7 +128,8 @@ add = ["5500 S. University Ave, Chicago, IL"]
 
 
 if __name__ == '__main__':
-    static_mapper(add)
+    get_directions("5500 S. University Ave, Chicago, IL", "5300 S. Ellis Ave, Chicago, IL")
+    
 
 
 
