@@ -48,7 +48,7 @@ def get_directions(rest1, rest2):
     for leg in directions_obj['legs']:
         for step in leg['steps']:
             html_instructions = step['html_instructions']
-            print(html_instructions)
+            return html_instructions
 
 
 def static_mapper(rest_list):
