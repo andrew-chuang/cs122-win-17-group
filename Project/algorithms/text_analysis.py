@@ -125,7 +125,10 @@ def get_scores(business_reviews, user_reviews):
         sim_frame - DataFrame
         sent_frame - dataframe
     '''
+
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
+    if len(grouped.axes[0]) < 2:
+        grouped = business_reviews
     l= []
     for text in grouped:
         blob = TextBlob(text)
@@ -138,7 +141,10 @@ def get_scores(business_reviews, user_reviews):
     sent_list = []
     keywords_list = []
     for i in range(len(users_grouped)):
-        sim = similarity_scoring(grouped, users_grouped[i])
+        if grouped == business_reviews:
+            sim = similarity_scoring(grouped['text'], users_grouped[i])
+        else:
+            sim = similarity_scoring(grouped, users_grouped[i])
         if len(users_grouped[i]) > 300:
             keywords = gensim.summarization.keywords(users_grouped[i])
             keywords = keywords.split('\n')
