@@ -19,8 +19,10 @@ from yelp_app import views
 
 urlpatterns = [
 	url(r'^time/$', views.current_datetime),
+    url(r'^$', views.search),
 	url(r'^search-form/$', views.search),
 	url(r'^search/$', views.search),
 	url(r'^recs/$', views.recs),
+    url(r'^details/$', views.details),
 
 ]
