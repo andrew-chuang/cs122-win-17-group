@@ -12,12 +12,6 @@ from datetime import datetime
 API_KEY = 'AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q'
 gmaps = googlemaps.Client(key=API_KEY)
 
-'''
-Test code to make sure that the Client object works; remove before turning in. 
-geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
-directions = gmaps.directions('5500 S. University Ave, Chicago, IL', \
-    "5300 S. Ellis Ave")
-print(geocode_result)'''
 
 def lat_lon_finder(address):
     '''
@@ -37,9 +31,9 @@ def lat_lon_finder(address):
 
 def get_directions(rest1, rest2):
     '''
-    Function takes in a list of restaurants 
-    (preordered according to schedule)
-    and produces HTML string of directions between the restaurants. 
+    Function takes in two restaurants 
+    and produces a string of HTML containing
+    directions between the restaurants. 
     
     Inputs:
         rest_list (list of restaurant addresses)
@@ -54,7 +48,7 @@ def get_directions(rest1, rest2):
     for leg in directions_obj['legs']:
         for step in leg['steps']:
             html_instructions = step['html_instructions']
-            print(html_instructions)
+            return html_instructions
 
 
 def static_mapper(rest_list):
@@ -103,9 +97,9 @@ def static_mapper(rest_list):
             'label:S%7C11211%7C11206%7C11222&key={}">'.format(API_KEY))
         return map_url
 
-
+'''
 def photo_producer(rest):
-    '''
+    
     Function uses Google's Places API to find the picture 
     attribution of a place and concatenates these attributes
     into a URL that can be used to display the picture
@@ -117,19 +111,12 @@ def photo_producer(rest):
     Outputs:
         image_url
 
-    '''
+    
     pic_dict = gmaps.places(rest)
     photo_attri = pic_dict["photos"]
     first_photo = photo_attri[0]
+'''
 
-address = ["5500 S. University Ave, Chicago, IL", "5300 S. Ellis Ave, Chicago, IL"]
-add = ["5500 S. University Ave, Chicago, IL"]
-
-
-
-if __name__ == '__main__':
-    get_directions("5500 S. University Ave, Chicago, IL", "5300 S. Ellis Ave, Chicago, IL")
-    
 
 
 
