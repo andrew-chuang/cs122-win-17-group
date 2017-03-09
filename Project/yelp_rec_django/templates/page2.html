@@ -18,10 +18,12 @@
 <p>If you do not see it, please make your search more specific.</p>
 
 <form action="/recs" method="get">
+  {% if matches.r1.0 %}
   <input type="radio" name="r1" value={{ matches.r1.0.2 }}>
   {{ matches.r1.0.0 }}, {{ matches.r1.0.1 }}<br>
   <input type="radio" name="r1" value={{ matches.r1.1.2 }}>
   {{ matches.r1.1.0 }}, {{ matches.r1.1.1 }}<br>
+  {% endif %}
   
   <hr width="50%" align="left">
 
