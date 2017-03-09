@@ -13,8 +13,8 @@ from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 from multiprocessing.pool import ThreadPool
 
-MAX_BIZ_REV = 2
-MAX_USER_REV = 2
+MAX_BIZ_REV = 10
+MAX_USER_REV = 15
 THREAD_SIZE = 3
 HEADER = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) \
 	#AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
@@ -138,8 +138,9 @@ def find_intended_restaurant(name, loc):
 		addr = ' '.join((biz.location.address[0], 
 			biz.location.city, biz.location.state_code))
 
-		business = business(biz)
-		results.append((business.name, business.address, business.business_id))
+		b = business(biz.id)
+
+		results.append((b.name, b.address, b.business_id))
 
 	return results
 

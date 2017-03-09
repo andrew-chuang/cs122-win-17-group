@@ -9,8 +9,15 @@
 <h2>CS122 Project</h2> 
 <h3>Team: Arif-Chuang-Hori-Teehan</h3>
 
-<p><strong>Recommendation Details Page</strong></p>
+<p><u><strong>Recommendation Details Page</strong></u></p>
 
 <p><b>{{ name }}</b><br>
-{{ addr }}</p>
+{{ addr }}<br></p>
+
+<p>{{ rating }} stars on Yelp!<br>
+{{ count }} reviews<br>
+<a href={{ url }}> Link to Yelp Page </a> </p>
+
+
+
 <p>{% autoescape off %}{{ map}}{% endautoescape %}</p>

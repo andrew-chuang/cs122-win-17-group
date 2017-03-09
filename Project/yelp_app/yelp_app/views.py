@@ -61,12 +61,19 @@ def search(request):
 def recs(request):
 	q = request.GET
 	user_input = []
+	now = current_datetime(request)
+	errors = []
+
 	if not q:
 		return render(request, 'search_form.html')
 	
 	for key in q:
 		if key != 'v':
 			user_input.append(str(q[key]))
+	if not user_input:
+		errors.append('Please try again - you made no selections.')
+		return render(request, 'search_form.html', {'time': now,
+			'errors': errors})
 
 	df = final_project.go(user_input, 'asdf.db')
 	results = final_project.post_processing(df, int(q['v']))
@@ -78,6 +85,7 @@ def recs(request):
 	
 	return render(request, 'recs.html', {'results': results, 'map': google_map})
 	
+
 def details(request):
 	q = request.GET
 	selection = q['business']
@@ -86,7 +94,8 @@ def details(request):
 	gmap = gmaps.static_mapper([business.address])
 
 	return render(request, 'details.html', {'name': business.name, 
-		'addr': business.address, 'map': gmap})
+		'addr': business.address, 'map': gmap, 'rating': business.rating, 
+		'count': business.review_count, 'url': business.url})
 
 def current_datetime(request):
 	'''
