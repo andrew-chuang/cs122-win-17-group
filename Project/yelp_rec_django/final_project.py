@@ -14,7 +14,7 @@ import os
 import algorithms.overlap
 import algorithms.text_analysis
 import data.json_to_sql
-import scraping.scraping
+import scraping.scraping as scraping
 from multiprocessing.pool import ThreadPool
 from itertools import starmap 
 '''
@@ -43,33 +43,25 @@ def scrape_data(user_input):
     user_reviews = []
     business_data = []
     bd = None
-    for biz_id in user_input:
-        #biz_data, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
-        
-        # ### No longer returning entire business information, just id
-        busn_id, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
+    for biz_id in user_input:        
+        busn_id, b_reviews, user_list = \
+            scraping.scrape_biz_reviews(biz_id)
         biz_reviews += b_reviews
 
         user_list = list(user_list)
-        #usr = [x[0] for x in user_list]
-        #cnt = [x[1] for x in user_list]
-
-        #usr_list = [usr[i:i+3] for i in range(0, len(usr), 3)]
-        #cnt_list = [cnt[i:i+3] for i in range(0, len(cnt), 3)]
-
         user_list = [user_list[i:i+5] for i in range(0, len(user_list), 5)]
-
         
         if busn_id != bd:
             business_data.append(busn_id)
             bd = busn_id
 
         for i in range(0, len(user_list)):
-            #u_reviews = ThreadPool(3).starmap(scraping.scrape_user_reviews, (usr_list[i], cnt_list[i]))
-            u_reviews = ThreadPool(5).starmap(scraping.scraping.scrape_user_reviews, user_list[i])
-            #u_reviews = scraping.scraping.scrape_user_reviews(user_id, count)
+            u_reviews = ThreadPool(5).starmap(scraping.scrape_user_reviews, 
+                user_list[i])
+
             if u_reviews:
                 user_reviews += (i for sublist in u_reviews for i in sublist)
+    
     return business_data, biz_reviews, user_reviews
 
 
@@ -100,10 +92,13 @@ def run_algorithms(database):
     Inputs:
             database - completed from convert_to_sql
     '''
-    biz_data, biz_reviews, user_reviews = algorithms.text_analysis.sql_to_df(database)
+    biz_data, biz_reviews, user_reviews = \
+        algorithms.text_analysis.sql_to_df(database)
     intersections = algorithms.overlap.count_intersections(user_reviews)
-    similarities, sentiments = algorithms.text_analysis.get_scores(biz_reviews, user_reviews)
-    scores = algorithms.text_analysis.combine_scores(intersections, similarities, sentiments)
+    similarities, sentiments = \
+        algorithms.text_analysis.get_scores(biz_reviews, user_reviews)
+    scores = algorithms.text_analysis.combine_scores(intersections, 
+        similarities, sentiments)
     return scores
 
 #Sort and filter results
