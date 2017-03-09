@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import datetime 
+import scraping.scraping as scraping 
 from scraping.scraping import find_intended_restaurant
 import final_project
 import google_api_groupwork.g_maps as gmaps
@@ -74,16 +75,18 @@ def recs(request):
 	for i in results:
 		addresses.append(i.address)
 	google_map = gmaps.static_mapper(addresses)
-	print(type(google_map))
-	#print(google_map)
 	
 	return render(request, 'recs.html', {'results': results, 'map': google_map})
 	
 def details(request):
+	q = request.GET
+	selection = q['business']
+	business = scraping.business(selection)
 
+	gmap = gmaps.static_mapper([business.address])
 
-
-	return render(request, 'details.html', {})
+	return render(request, 'details.html', {'name': business.name, 
+		'addr': business.address, 'map': gmap})
 
 def current_datetime(request):
 	'''

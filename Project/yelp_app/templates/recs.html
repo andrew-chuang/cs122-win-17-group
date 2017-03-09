@@ -17,7 +17,7 @@ To see more information about a specific recommendation, click on that result an
 
 
 {% for i in results %}
-{{ i.name }}<br>
+<b>{{ forloop.counter }}. {{ i.name }}</b><br>
 {{ i.address }}<br><br> 
 {% endfor %}
 
@@ -25,7 +25,8 @@ To see more information about a specific recommendation, click on that result an
 <form action="/details" method="get">
 <select name='business'>
 {% for i in results %}
-  <option value={{ i.id }}> {{i.name}}, {{i.address}} </option>
+  <option name='business' value={{ i.business_id }}> {{i.name}}, {{i.address}} 
+  </option>
 {% endfor %}
 </select>
 <br><br>

@@ -44,7 +44,7 @@ class business:
 		attributes of business as listed on Yelp.
 	'''
 
-	def __init__(self, business_id, attr=True):
+	def __init__(self, business_id, attr=False):
 		'''
 		Initialization uses the Yelp API to obtain the name, address, review count, 
 		rating, url and attributes of a business. 
@@ -60,8 +60,15 @@ class business:
 		
 		self.name = biz.name
 		self.business_id = biz.id
-		self.address = ' '.join((biz.location.address[0], 
-			biz.location.city, biz.location.state_code))
+
+		# Sometimes businesses don't have a proper address?
+		if biz.location.address:
+			self.address = ' '.join((biz.location.address[0], 
+				biz.location.city, biz.location.state_code))
+		else: 
+			self.address = ' '.join((biz.location.city, 
+				biz.location.state_code))
+		
 		self.review_count = biz.review_count
 		self.rating = biz.rating
 		self.url = biz.url.split('?')[0] + '?'
@@ -131,8 +138,8 @@ def find_intended_restaurant(name, loc):
 		addr = ' '.join((biz.location.address[0], 
 			biz.location.city, biz.location.state_code))
 
-		results.append((biz.name, addr, biz.id))
-
+		business = business(biz)
+		results.append((business.name, business.address, business.business_id))
 
 	return results
 
