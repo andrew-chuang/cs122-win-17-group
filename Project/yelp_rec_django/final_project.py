@@ -54,9 +54,11 @@ def scrape_data(user_input):
     return business_data, biz_reviews, user_reviews
 
 
-#Convert the data into a sql database
+
 def convert_to_sql(business_data, biz_reviews, user_reviews, database):
     '''
+    Convert the data into a sql database
+
     Inputs:
             business_data, biz_reviews, user_reviews - from scraped Yelp pages
             database - unique .db filename as a string
@@ -75,7 +77,6 @@ def convert_to_sql(business_data, biz_reviews, user_reviews, database):
     data.json_to_sql.review_to_db(database, user_reviews, 'user_reviews')
      
 
-#Run algorithms
 def run_algorithms(database):
     '''
     Inputs:
@@ -90,9 +91,7 @@ def run_algorithms(database):
         similarities, sentiments)
     return scores
 
-#Sort and filter results
 
-#Display in Django
 
 def go(user_input, db):
     bd, br, ur = scrape_data(user_input)
