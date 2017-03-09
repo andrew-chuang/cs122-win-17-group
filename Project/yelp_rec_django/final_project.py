@@ -38,23 +38,6 @@ def scrape_data(user_input):
                 for a restaurant (NOT ALL THE SAME RESTAURANT)
             user_reviews - list of dictionaries, each dictionary is a review 
                 for a restuarant (NOT ALL THE SAME USER OR RESTAURANT)
-        biz_reviews = []
-    user_reviews = []
-    business_data = []
-    bd = None
-    for biz_id in user_input:
-        print('# # # # # # # # # # # # #', biz_id)
-        biz_data, b_reviews, user_list = scraping.scraping.scrape_biz_reviews(biz_id)
-        biz_reviews += b_reviews
-        if biz_data != bd:
-            business_data.append(biz_data)
-            bd = biz_data
-        for user_id, count in user_list:
-            print('######### NEW USER ##########', user_id)
-            u_reviews = scraping.scraping.scrape_user_reviews(user_id, count)
-            if u_reviews:
-                user_reviews += u_reviews
-    return business_data, biz_reviews, user_reviews
     '''
     biz_reviews = []
     user_reviews = []
