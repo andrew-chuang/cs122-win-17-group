@@ -13,15 +13,15 @@ from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 from multiprocessing.pool import ThreadPool
 
-MAX_BIZ_REV = 20
-MAX_USER_REV = 20
+MAX_BIZ_REV = 30
+MAX_USER_REV = 15
 THREAD_SIZE = 3
 DEBUG = True
 
 # Suppress warning output from urllib3
 urllib3.disable_warnings()
 # Set number of connections in order to use threading/pooling
-pm = urllib3.PoolManager(num_pools=5, maxsize=10)
+pm = urllib3.PoolManager(num_pools=6, maxsize=10)
 
 # read API keys for Yelp
 with open('config_secret.json') as cred:
@@ -106,7 +106,8 @@ def find_intended_restaurant(name, loc):
 
 	This is used to determine and verify which restaurant(s) the user 
 	    intended to input, because we cannot programmatically 
-	    convert a name to a business ID.
+	    convert a name to a business ID. This function is directly used
+	    in the Django yelp_app/views.py file. 
 
 	Inputs:
 		name: (string) restaurant name inputted by user (medici, harolds, etc)
@@ -142,11 +143,12 @@ def scrape_biz_reviews(business_id):
         business_id (string): unique Yelp ID identifier for each business
 	Outputs: 
 	    (Tuple)
-		1: biz.__dict__: namespace for the business, containing attributes
+		1: The business ID
 		2: List of dictionaries, each dictionary containing information
 			for one review. Includes: user ID, date, stars, text. 
 		3: Set containing all of the user IDs and their review counts
-			corresponding to the scraped reviews. 
+			corresponding to the scraped reviews, as well as the 
+			business ID that led to their review (which is the same as input). 
 	Example: reviews = scrape_biz_reviews('medici-on-57th-chicago')
 	'''
 	if DEBUG:
@@ -323,7 +325,6 @@ def scrape_biz_basics(business_id):
 	
 	agg_rating = aggregate_info.find('meta')['content']
 	agg_rating = float(agg_rating)
-
 
 	return (address, review_count, agg_rating)
 
