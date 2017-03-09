@@ -9,12 +9,16 @@
 <h3>Team: Arif-Chuang-Hori-Teehan</h3>
 <p><strong>Your Recommendations</strong></p>
 
-To see more information about a specific recommendation, click on that result and press Submit. 
+To see more information about a specific recommendation, click on that result and press Submit. <br><br>
+
+{% autoescape off %}{{ map}}{% endautoescape %}
+<br><br>
+
+
 
 {% for i in results %}
 {{ i.name }}<br>
-{{ i.address }}
-
+{{ i.address }}<br><br> 
 {% endfor %}
 
 

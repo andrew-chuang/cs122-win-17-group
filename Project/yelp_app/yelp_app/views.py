@@ -3,6 +3,7 @@ from django.http import HttpResponse
 import datetime 
 from scraping.scraping import find_intended_restaurant
 import final_project
+import google_api_groupwork.g_maps as gmaps
 
 
 def parse_search_inputs(request):
@@ -68,8 +69,15 @@ def recs(request):
 
 	df = final_project.go(user_input, 'asdf.db')
 	results = final_project.post_processing(df, int(q['v']))
+
+	addresses = []
+	for i in results:
+		addresses.append(i.address)
+	google_map = gmaps.static_mapper(addresses)
+	print(type(google_map))
+	#print(google_map)
 	
-	return render(request, 'recs.html', {'results': results})
+	return render(request, 'recs.html', {'results': results, 'map': google_map})
 	
 def details(request):
 
