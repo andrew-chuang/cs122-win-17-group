@@ -17,17 +17,6 @@ import data.json_to_sql
 import scraping.scraping as scraping
 from multiprocessing.pool import ThreadPool
 from itertools import starmap 
-'''
-class DataCount:
-    data_count = 0
-    
-    def __init__(self):
-        self.data_count += 1
-        #self.data_count = count
-'''    
-#Take user input
-def find_correct_biz():
-    pass
 
 
 #Scrape the data
