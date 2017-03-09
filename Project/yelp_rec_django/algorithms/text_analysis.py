@@ -151,7 +151,7 @@ def get_scores(business_reviews, user_reviews):
         #    sim = similarity_scoring(grouped['text'], users_grouped[i])
         #else:
         sim = similarity_scoring(business_reviews.text, users_grouped[i])
-        if len(users_grouped[i]) > 300:
+        if len(users_grouped[i]) > 400:
             keywords = gensim.summarization.keywords(users_grouped[i])
             keywords = keywords.split('\n')
         else:
