@@ -10,6 +10,7 @@ def parse_search_inputs(request):
 	Reads the inputs from the search form and parses them into a 
 		usable dictionary. 
 	Returns: dictionary containing the search terms (n1, l1, ..., n4, l4)
+		or None if no inputs provided. 
 	'''
 	terms = None
 	if request.GET:
@@ -62,16 +63,23 @@ def recs(request):
 		return render(request, 'search_form.html')
 	
 	for key in q:
-		user_input.append(str(q[key]))
+		if key != 'v':
+			user_input.append(str(q[key]))
 
-
-	print(user_input)
-	out = final_project.go(user_input, 'asdf.db')
+	df = final_project.go(user_input, 'asdf.db')
+	results = final_project.post_processing(df, int(q['v']))
 	
-	return render(request, 'recs.html', {'d': out})
+	return render(request, 'recs.html', {'results': results})
 	
+def details(request):
 
+
+
+	return render(request, 'details.html', {})
 
 def current_datetime(request):
+	'''
+	Returns current date and time. 
+	'''
 	now = datetime.datetime.now()
 	return now
