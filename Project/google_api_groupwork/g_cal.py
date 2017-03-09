@@ -1,7 +1,7 @@
 # CS 122 Yelp Recommender Project
 # Arif-Chuang-Hori-Teehan
 #
-#
+# 
 
 import httplib2
 import os
@@ -25,17 +25,22 @@ from json import JSONEncoder
 
 import googlemaps 
 from datetime import datetime
-from googlemaps 
+
 
 # Group keys are held in a separate file for security reasons.
 # The credential function requires a CID and CIS. Can
 # be found in the client_secrets.json file as well. 
+# These functions were written for the purpose of being used
+# in conjunction with the Django site, but are not currently
+# being included in the project presentation. 
 
 SCOPES = 'https://www.googleapis.com/auth/calendar'
 APPLICATION_NAME = "Yelp Recommender"
 
+# Following initializes Google Maps client due to its
+# planned use for scheduling and detail display. 
 
-GMAPS = Client(API_KEY)
+GMAPS = googlemaps.Client(API_KEY)
 
 
 # Following get_credentials function written using 
@@ -63,8 +68,7 @@ def get_credentials():
 def yelp_scheduler(restaurant_list, user_requests):
     '''
     Function takes in list of recommended restaurants and 
-    returns list of dictionaries after. Hopefully list is sorted
-    by preference? 
+    returns list of dictionaries after. 
     
     Inputs:
         user_requests (list)
@@ -137,7 +141,8 @@ def calendar_selector():
     has already been added to the users' list of calenders. 
     If so, the calendar does not return or adjust anything. 
     The calendar is added if the function detects that the user
-    has not produced a 
+    has not already added a Yelp Recommender function to their 
+    calendars list. 
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -157,8 +162,15 @@ def calendar_selector():
 def insert_event(event_list):
     '''
     Function inserts event into the calendar of the user. Created
-    with the help of the Quickstart.py file of the Google and by using the 
-    Google API documentation. 
+    with the help of the Quickstart.py file of the Google and 
+    by extensively using the Google API documentation. 
+
+    Inputs:
+        event_list (list) list of dictionaries that are formatted in the
+        correct input for Google Calendar API
+    
+    Outputs:
+        No direct outputs from Python, but API adds event to specified calendar. 
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())

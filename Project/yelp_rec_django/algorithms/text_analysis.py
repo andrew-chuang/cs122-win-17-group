@@ -125,7 +125,10 @@ def get_scores(business_reviews, user_reviews):
         sim_frame - DataFrame
         sent_frame - dataframe
     '''
+
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
+    if len(grouped.axes[0]) < 2:
+        grouped = business_reviews
     l= []
     for text in grouped:
         blob = TextBlob(text)
@@ -136,9 +139,19 @@ def get_scores(business_reviews, user_reviews):
     users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
     sim_list = []
     sent_list = []
-    for i in range(len(users_grouped.axes[0])):
-        sim = similarity_scoring(grouped, users_grouped[i])
-        sim_list.append((users_grouped.axes[0][i], sim))
+    keywords_list = []
+    for i in range(len(users_grouped)):
+        if grouped == business_reviews:
+            sim = similarity_scoring(grouped['text'], users_grouped[i])
+        else:
+            sim = similarity_scoring(grouped, users_grouped[i])
+        if len(users_grouped[i]) > 300:
+            keywords = gensim.summarization.keywords(users_grouped[i])
+            keywords = keywords.split('\n')
+        else:
+            keywords = "Review is too small for keywords"
+        sim_list.append((users_grouped.axes[0][i], sim, keywords))
+
 
         blob = TextBlob(users_grouped[i])
         sent = blob.sentiment.polarity
@@ -147,6 +160,7 @@ def get_scores(business_reviews, user_reviews):
 
     sim_list = sorted(sim_list, key = lambda k: -k[1])
     sent_list = sorted(sent_list, key = lambda k: -k[1])
+
     
     sim_frame = pd.DataFrame(sim_list)
     sent_frame = pd.DataFrame(sent_list)
@@ -204,17 +218,17 @@ def combine_scores(overlap_score, sim_score, sent_score):
 
     score_frame = pd.concat([sorted_sims, sorted_sents, sorted_overlaps], 1)
     score_frame = score_frame.fillna(0)
-    score_frame.columns = ['id', 'sims', 'sents', 'overlaps']
+    score_frame.columns = ['id', 'sims', 'keywords', 'sents', 'overlaps']
 
     factor = len(score_frame.overlaps)
     score_frame = pd.concat([score_frame, 2 * (factor // 3) * (.5 * score_frame.sents + score_frame.sims) + \
         (factor // 3) * score_frame.overlaps], 1)
 
     
-    score_frame.columns = ['id','similarity', 'sentiment', 'overlaps', 'sums']
+    score_frame.columns = ['id','similarity', 'keywords', 'sentiment', 'overlaps', 'sums']
 
     
-    score_frame = score_frame[['id', 'sums', 'similarity', 'sentiment', 'overlaps']]
+    score_frame = score_frame[['id', 'sums', 'keywords', 'similarity', 'sentiment', 'overlaps']]
 
     score_frame = score_frame.sort_values('sums', ascending = False)
 
