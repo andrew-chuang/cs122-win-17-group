@@ -6,7 +6,7 @@ import numpy as np
 import gensim
 from collections import defaultdict 
 from textblob import TextBlob
-from overlap import count_intersections
+from . import overlap
 #from overlap import count_intersections
 
 # include sql calls for text data, should return a list where each entry is the text of a review
@@ -132,7 +132,7 @@ def get_scores(business_reviews, user_reviews):
     if len(grouped.axes[0]) < 2:
         grouped = business_reviews
     '''
-    overlap_dict = count_intersections(user_reviews)
+    overlap_dict = overlap.count_intersections(user_reviews)
 
     l= []
 
