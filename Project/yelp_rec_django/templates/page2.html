@@ -36,10 +36,31 @@
   {{ matches.r1.1.0 }}, {{ matches.r1.1.1 }}<br>
   
   <hr width="50%" align="left">
-  
-  <input type="radio" name="r2" value={{ matches.r2.0.2 }}> {{ matches.r2.0.0 }}, {{ matches.r1.0.1 }}<br>
-  <input type="radio" name="r2" value={{ matches.r2.1.2 }}>{{ matches.r2.1.0 }}, {{ matches.r1.1.1 }}<br>
+
+  {% if matches.r2.0 %}
+  <input type="radio" name="r2" value={{ matches.r2.0.2 }}> 
+  {{ matches.r2.0.0 }} {{ matches.r2.0.1 }}<br>
+  <input type="radio" name="r2" value={{ matches.r2.1.2 }}>
+  {{ matches.r2.1.0 }}, {{ matches.r2.1.1 }}<br>
   <hr width="50%" align="left">
+  {% endif %}
+
+  {% if matches.r3.0 %}
+  <input type="radio" name="r3" value={{ matches.r3.0.2 }}> 
+  {{ matches.r3.0.0 }} {{ matches.r3.0.1 }}<br>
+  <input type="radio" name="r3" value={{ matches.r3.1.2 }}>
+  {{ matches.r3.1.0 }}, {{ matches.r3.1.1 }}<br>
+  <hr width="50%" align="left">
+  {% endif %}
+
+  {% if matches.r4.0 %}
+  <input type="radio" name="r4" value={{ matches.r4.0.2 }}> 
+  {{ matches.r4.0.0 }} {{ matches.r4.0.1 }}<br>
+  <input type="radio" name="r4" value={{ matches.r4.1.2 }}>
+  {{ matches.r4.1.0 }}, {{ matches.r4.1.1 }}<br>
+  <hr width="50%" align="left">
+  {% endif %}
+
   <input type="submit" value="Submit"></td>
 </form>
 

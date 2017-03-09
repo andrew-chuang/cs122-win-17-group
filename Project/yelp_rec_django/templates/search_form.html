@@ -8,13 +8,10 @@
     <title>Yelp Recommendation Engine</title>
 </head>
 
-{% if blankError %}
-<p style="color: red;">Please submit a name and location.</p>
-{% endif %}
-
-{% if missingError %}
-<p style="color: red;">Please submit an equal amount of locations and restaurants.</p>
-{% endif %}
+{% for error in errors %}
+ <p style="color: red;">
+ <li>{{ error }}</li></p>
+  {% endfor %}
 
 <p>Enter up to four restaurant names and locations (city, state or zip code) that you already like. You must enter a location for each restaurant.</p>
 

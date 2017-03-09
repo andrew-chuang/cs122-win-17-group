@@ -11,8 +11,9 @@ def parse_search_inputs(request):
 		usable dictionary. 
 	Returns: dictionary containing the search terms (n1, l1, ..., n4, l4)
 	'''
-	terms = {}
+	terms = None
 	if request.GET:
+		terms = {}
 		q = request.GET
 		if q['n1']:
 			terms['r1'] = (str(q['n1']), str(q['l1']))
@@ -26,25 +27,32 @@ def parse_search_inputs(request):
 
 
 def search(request):
-	missingError = False
+	errors = []
 	now = current_datetime(request)
 	terms = parse_search_inputs(request)
 	matches = {}
-	if not terms:
-		return render(request, 'search_form.html', 
-			{'time': now, 'blankError': True})
+	
+	if terms is None:
+		return render(request, 'search_form.html', {'time': now})
+	
+	elif not terms:
+		errors.append('Please submit a name and location.')
 
 	else:
 		for rest in terms:
 			if not (terms[rest][0] and terms[rest][1]):
-				return render(request, 'search_form.html', 
-					{'time': now, 'missingError': True})
+				errors.append('Please submit an equal amount \
+					of locations and restaurants.')
 			else:
 				matches[rest] = find_intended_restaurant(terms[rest][0], 
 					terms[rest][1])
-
+	
+	if not errors:
 		return render(request, 'page2.html', 
 			{'inputs': terms, 'matches': matches})
+	else:
+		return render(request, 'search_form.html', {'time': now,
+			'errors': errors})
 
 
 def recs(request):
