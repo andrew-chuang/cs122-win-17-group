@@ -12,12 +12,6 @@ from datetime import datetime
 API_KEY = 'AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q'
 gmaps = googlemaps.Client(key=API_KEY)
 
-'''
-Test code to make sure that the Client object works; remove before turning in. 
-geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
-directions = gmaps.directions('5500 S. University Ave, Chicago, IL', \
-    "5300 S. Ellis Ave")
-print(geocode_result)'''
 
 def lat_lon_finder(address):
     '''
@@ -122,14 +116,7 @@ def photo_producer(rest):
     photo_attri = pic_dict["photos"]
     first_photo = photo_attri[0]
 
-address = ["5500 S. University Ave, Chicago, IL", "5300 S. Ellis Ave, Chicago, IL"]
-add = ["5500 S. University Ave, Chicago, IL"]
 
-
-
-if __name__ == '__main__':
-    get_directions("5500 S. University Ave, Chicago, IL", "5300 S. Ellis Ave, Chicago, IL")
-    
 
 
 
