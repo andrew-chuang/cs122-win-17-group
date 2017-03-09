@@ -31,12 +31,14 @@ from datetime import datetime
 
 API_KEY = 'AIzaSyCHgCLQKPNQDVJvycSL0kRh1AdTVYTwm9Q'
 gmaps = googlemaps.Client(key=API_KEY)
-# Geocoding an address
+
+'''
+Test code to make sure that the Client object works; remove before turning in. 
 geocode_result = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
 directions = gmaps.directions('5500 S. University Ave, Chicago, IL', \
 	"5300 S. Ellis Ave")
 print(directions)
-
+'''
 
 def get_directions(rest_list):
     ''''
@@ -56,10 +58,12 @@ def get_directions(rest_list):
         rest2 = rest_list[index]
         directions_object = gmaps.directions(rest1, rest2)
 
-def direct_mapper(rest_pair):
+def direct_lines(rest_pair):
 	'''
 	Function to potentially produce a static map with
-	direction lines between the restaurant markers. 
+	lines between the restaurant markers. These lines
+	do not map "directions via street" between locations, just 
+	direct lines between locations. 
 
 	Inputs:
 	    rest_list
@@ -76,6 +80,10 @@ def static_mapper(address_list):
 	the different components of the URL together into a valid
 	HTML img tag that can then be returned to Django and displayed
 	as a static map with markers. 
+
+	Function returns a base map centered on the city of Chicago, IL
+	if the list of addresses does not at least have one address. 
+	(i.e. len(address_list) == 0)
 
 	Input:
 	    rest_list:
@@ -123,7 +131,9 @@ def photo_producer(rest):
 
     '''
     pic_dict = gmaps.places(rest)
-    pic_dict["photos"][""]
+    photo_attri = pic_dict["photos"]
+    first_photo = photo_attri[0]
+
 
         
 
