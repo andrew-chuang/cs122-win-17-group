@@ -9,25 +9,13 @@
 <p><strong>Page 2</strong></p>
 
 
-  <p><u>You searched for:</u></p>
-    <p>
-    {% if  inputs.r1.0 and inputs.r1.1 %}
-      {{inputs.r1.0}} in {{inputs.r1.1 }}  <br>
-    {% endif %}
-    
-    {% if  inputs.r2.0 and inputs.r2.1 %}
-      {{inputs.r2.0}} in {{inputs.r2.1 }}  <br>
-    {% endif %} 
+  <u>You searched for:</u> 
+      {% for key, value in inputs.items %}
+      <li><i>{{value.0}}</i> in <i>{{value.1}}</i></li>
+      {% endfor %}
 
-    {% if  inputs.r3.0 and inputs.r3.1 %}
-      {{inputs.r3.0}} in {{inputs.r3.1 }}  <br>
-    {% endif %} 
-
-    {% if  inputs.r4.0 and inputs.r4.1 %}
-      {{inputs.r4.0}} in {{inputs.r4.1 }}  <br>
-    {% endif %}  </p>
-
-<h4> Please select the exact restaurants you intended: </h4>
+<h4> Please select the exact restaurants you intended. </h4>
+<p>If you do not see it, please make your search more specific.</p>
 
 <form action="/recs" method="get">
   <input type="radio" name="r1" value={{ matches.r1.0.2 }}>
@@ -36,10 +24,31 @@
   {{ matches.r1.1.0 }}, {{ matches.r1.1.1 }}<br>
   
   <hr width="50%" align="left">
-  
-  <input type="radio" name="r2" value={{ matches.r2.0.2 }}> {{ matches.r2.0.0 }}, {{ matches.r1.0.1 }}<br>
-  <input type="radio" name="r2" value={{ matches.r2.1.2 }}>{{ matches.r2.1.0 }}, {{ matches.r1.1.1 }}<br>
+
+  {% if matches.r2.0 %}
+  <input type="radio" name="r2" value={{ matches.r2.0.2 }}> 
+  {{ matches.r2.0.0 }} {{ matches.r2.0.1 }}<br>
+  <input type="radio" name="r2" value={{ matches.r2.1.2 }}>
+  {{ matches.r2.1.0 }}, {{ matches.r2.1.1 }}<br>
   <hr width="50%" align="left">
+  {% endif %}
+
+  {% if matches.r3.0 %}
+  <input type="radio" name="r3" value={{ matches.r3.0.2 }}> 
+  {{ matches.r3.0.0 }} {{ matches.r3.0.1 }}<br>
+  <input type="radio" name="r3" value={{ matches.r3.1.2 }}>
+  {{ matches.r3.1.0 }}, {{ matches.r3.1.1 }}<br>
+  <hr width="50%" align="left">
+  {% endif %}
+
+  {% if matches.r4.0 %}
+  <input type="radio" name="r4" value={{ matches.r4.0.2 }}> 
+  {{ matches.r4.0.0 }} {{ matches.r4.0.1 }}<br>
+  <input type="radio" name="r4" value={{ matches.r4.1.2 }}>
+  {{ matches.r4.1.0 }}, {{ matches.r4.1.1 }}<br>
+  <hr width="50%" align="left">
+  {% endif %}
+
   <input type="submit" value="Submit"></td>
 </form>
 
