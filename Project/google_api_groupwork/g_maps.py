@@ -65,16 +65,13 @@ def get_directions(rest1, rest2):
         rest_list (list of restaurant addresses)
 
     Outputs:
-        dir_list (list) 
+        dir_list (string) string of html directions 
+        between the  
     '''
     directions_obj = gmaps.directions(rest1, rest2)
     directions_obj = directions_obj[0]
 
     for leg in directions_obj['legs']:
-        '''startAddress = leg['start_address']
-        print("Start Address:", startAddress)
-        endAddress = leg['end_address']
-        print("End Address:", endAddress)'''
         for step in leg['steps']:
             html_instructions = step['html_instructions']
             print(html_instructions)
