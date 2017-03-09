@@ -2,15 +2,23 @@
 <h1>Welcome to the Yelp Recommendation Engine!</h1>
 <h2>CS122 Project</h2>
 <h3>Team: Arif-Chuang-Hori-Teehan</h3>
-<h4>{{current_date}}</h4>
+<h4>{{ time }}</h4>
 
 <head>
     <title>Yelp Recommendation Engine</title>
 </head>
 
-<p>Enter up to four restaurant names and locations (city, state or zip code).</p>
+{% if blankError %}
+<p style="color: red;">Please submit a name and location.</p>
+{% endif %}
 
-<form action="/search/" method="get">
+{% if missingError %}
+<p style="color: red;">Please submit an equal amount of locations and restaurants.</p>
+{% endif %}
+
+<p>Enter up to four restaurant names and locations (city, state or zip code) that you already like. You must enter a location for each restaurant.</p>
+
+<form action="" method="get">
 <table>
   <tbody>
   <tr>
@@ -18,19 +26,19 @@
     <th>Restaurant Location</th> 
   </tr>
     <tr>
-      <td><input type="text" name="n1"><br></td>
+      <td>1. <input type="text" name="n1"><br></td>
       <td><input type="text" name="l1"><br></td>
     </tr>
     <tr>
-      <td><input type="text" name="n2"><br></td>
+      <td>2. <input type="text" name="n2"><br></td>
       <td><input type="text" name="l2"><br></td>
     </tr>
     <tr>
-      <td><input type="text" name="n3"><br></td>
+      <td>3. <input type="text" name="n3"><br></td>
       <td><input type="text" name="l3"><br></td>
     </tr>
     <tr>
-      <td><input type="text" name="n4"><br></td>
+      <td>4. <input type="text" name="n4"><br></td>
       <td><input type="text" name="l4"><br></td>
     </tr>
     <tr>

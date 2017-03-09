@@ -6,48 +6,42 @@
 <h1>Yelp Recommendation Engine</h1>
 <h2>CS122 Project</h2> 
 <h3>Team: Arif-Chuang-Hori-Teehan</h3>
-<p>Page 2</p><br>
+<p><strong>Page 2</strong></p>
 
 
-{% if not dict %}
-<p>You entered no search terms!</p>
-
-  {% else %}
-  <p>You searched for:</p><br> 
+  <p><u>You searched for:</u></p>
     <p>
-    {% if  dict.n1 %}
-      {{dict.n1}}
-        {% if dict.l1%}
-        in {{dict.l1}}
-        {% endif %}
-    {% endif %} </p>
+    {% if  inputs.r1.0 and inputs.r1.1 %}
+      {{inputs.r1.0}} in {{inputs.r1.1 }}  <br>
+    {% endif %}
     
-    <p>
-    {% if  dict.n2 %}
-      {{dict.n2}}
-        {% if dict.l2%}
-        in {{dict.l2}}
-        {% endif %}
-    {% endif %} </p>
+    {% if  inputs.r2.0 and inputs.r2.1 %}
+      {{inputs.r2.0}} in {{inputs.r2.1 }}  <br>
+    {% endif %} 
 
-    <p>
-    {% if  dict.n3 %}
-      {{dict.n3}}
-        {% if dict.l3%}
-        in {{dict.l3}}
-        {% endif %}
-    {% endif %} </p>
+    {% if  inputs.r3.0 and inputs.r3.1 %}
+      {{inputs.r3.0}} in {{inputs.r3.1 }}  <br>
+    {% endif %} 
 
-    <p>
-    {% if  dict.n3 %}
-      {{dict.n3}}
-        {% if dict.l3%}
-        in {{dict.l3}}
-        {% endif %}
-    {% endif %} </p>
+    {% if  inputs.r4.0 and inputs.r4.1 %}
+      {{inputs.r4.0}} in {{inputs.r4.1 }}  <br>
+    {% endif %}  </p>
 
-{% endif %}
+<h4> Please select the exact restaurants you intended: </h4>
 
+<form action="/recs" method="get">
+  <input type="radio" name="r1" value={{ matches.r1.0.2 }}>
+  {{ matches.r1.0.0 }}, {{ matches.r1.0.1 }}<br>
+  <input type="radio" name="r1" value={{ matches.r1.1.2 }}>
+  {{ matches.r1.1.0 }}, {{ matches.r1.1.1 }}<br>
+  
+  <hr width="50%" align="left">
+  
+  <input type="radio" name="r2" value={{ matches.r2.0.2 }}> {{ matches.r2.0.0 }}, {{ matches.r1.0.1 }}<br>
+  <input type="radio" name="r2" value={{ matches.r2.1.2 }}>{{ matches.r2.1.0 }}, {{ matches.r1.1.1 }}<br>
+  <hr width="50%" align="left">
+  <input type="submit" value="Submit"></td>
+</form>
 
 
 
