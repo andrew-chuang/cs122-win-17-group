@@ -77,7 +77,7 @@ def apply_lsi(corp, dictionary):
     '''
     tfidf = gensim.models.TfidfModel(corp)
     c_tfidf = tfidf[corp]
-    lsi = gensim.models.LsiModel(c_tfidf, id2word=dictionary, num_topics=50)
+    lsi = gensim.models.LsiModel(tfidf[c_tfidf], id2word=dictionary, num_topics=50)
     corpus_lsi = lsi[c_tfidf]
     return lsi, corpus_lsi
 
@@ -141,7 +141,7 @@ def get_scores(business_reviews, user_reviews):
     sent_list = []
     keywords_list = []
     for i in range(len(users_grouped)):
-        if grouped == business_reviews:
+        if grouped.equals(business_reviews):
             sim = similarity_scoring(grouped['text'], users_grouped[i])
         else:
             sim = similarity_scoring(grouped, users_grouped[i])
