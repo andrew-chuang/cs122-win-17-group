@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>
-		
-	</title>
+    <title>Your Recommendations</title>
 </head>
-<body>
+<h1>Yelp Recommendation Engine</h1>
+<h2>CS122 Project</h2> 
+<h3>Team: Arif-Chuang-Hori-Teehan</h3>
+<p><strong>Your Recommendations</strong></p>
 
-asdf
+To see more information about a specific recommendation, click on that result and press Submit. 
 
-{{ d }}
+{% for i in results %}
+{{ i.name }}<br>
+{{ i.address }}
 
+{% endfor %}
+
+
+<form action="/details" method="get">
+<select name='business'>
+{% for i in results %}
+  <option value={{ i.id }}> {{i.name}}, {{i.address}} </option>
+{% endfor %}
+</select>
+<br><br>
+
+  <input type="submit" value="Submit">
+</form>
 
 </body>
 </html>
