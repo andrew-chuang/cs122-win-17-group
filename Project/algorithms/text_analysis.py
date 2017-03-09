@@ -6,7 +6,6 @@ import numpy as np
 import gensim
 from collections import defaultdict 
 from textblob import TextBlob
-from . import overlap
 #from overlap import count_intersections
 
 # include sql calls for text data, should return a list where each entry is the text of a review
@@ -126,71 +125,47 @@ def get_scores(business_reviews, user_reviews):
         sim_frame - DataFrame
         sent_frame - dataframe
     '''
-    '''
+
     grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
-    
     if len(grouped.axes[0]) < 2:
         grouped = business_reviews
-    '''
-    overlap_dict = count_intersections(user_reviews)
-
     l= []
-
-    for text in business_reviews.text:
+    for text in grouped:
         blob = TextBlob(text)
         l.append(blob.sentiment.polarity)
-
     br_array = np.array(l)
     avg = np.mean(br_array)
 
     users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
-    
-    score_list = []
+    sim_list = []
+    sent_list = []
+    keywords_list = []
     for i in range(len(users_grouped)):
-        #if grouped.equals(business_reviews):
-        #    sim = similarity_scoring(grouped['text'], users_grouped[i])
-        #else:
-        sim = similarity_scoring(business_reviews.text, users_grouped[i])
+        if grouped.equals(business_reviews):
+            sim = similarity_scoring(grouped['text'], users_grouped[i])
+        else:
+            sim = similarity_scoring(grouped, users_grouped[i])
         if len(users_grouped[i]) > 300:
             keywords = gensim.summarization.keywords(users_grouped[i])
             keywords = keywords.split('\n')
         else:
             keywords = "Review is too small for keywords"
-        
+        sim_list.append((users_grouped.axes[0][i], sim, keywords))
 
 
         blob = TextBlob(users_grouped[i])
         sent = blob.sentiment.polarity
         sent = sent - avg
-        #sent_list.append((users_grouped.axes[0][i], sent))
+        sent_list.append((users_grouped.axes[0][i], sent))
 
-        overlap_score = overlap_dict[users_grouped.axes[0][i]]
-        score_list.append((users_grouped.axes[0][i], sim, keywords, sent, overlap_score))
-
-
-    #sim_list = sorted(sim_list, key = lambda k: -k[1])
-    #sent_list = sorted(sent_list, key = lambda k: -k[1])
+    sim_list = sorted(sim_list, key = lambda k: -k[1])
+    sent_list = sorted(sent_list, key = lambda k: -k[1])
 
     
-    #sim_frame = pd.DataFrame(sim_list)
-    #sent_frame = pd.DataFrame(sent_list)
+    sim_frame = pd.DataFrame(sim_list)
+    sent_frame = pd.DataFrame(sent_list)
 
-    score_frame = pd.DataFrame(score_list)
-
-    score_frame.columns = ['id', 'sims', 'keywords', 'sents', 'overlaps']
-
-    factor = len(score_frame.overlaps)
-    score_frame = pd.concat([score_frame, 2 * (factor // 3) * (.5 * score_frame.sents + score_frame.sims) + \
-        (factor // 3) * score_frame.overlaps], 1)
-
-    score_frame.columns = ['id','similarity', 'keywords', 'sentiment', 'overlaps', 'sums']
-
-
-    score_frame = score_frame[['id', 'sums', 'keywords', 'similarity', 'sentiment', 'overlaps']]
-
-    score_frame = score_frame.sort_values('sums', ascending = False)
-
-    return score_frame
+    return sim_frame, sent_frame
 '''
 def sentiment_scoring(business_reviews, user_reviews):
     
@@ -223,9 +198,9 @@ def sentiment_scoring(business_reviews, user_reviews):
 
     return score_frame
 '''
-'''
+
 def combine_scores(overlap_score, sim_score, sent_score):
-    
+    '''
     Combines the similarity score and sentiment score
 
     inputs
@@ -233,7 +208,7 @@ def combine_scores(overlap_score, sim_score, sent_score):
         sent_score - DataFrame
     returns 
         score_frame - DataFrame
-
+    '''
     sorted_sims = sim_score.sort_values(0)
     sorted_sents = sent_score.sort_values(0)
     sorted_overlaps = overlap_score.sort_values(0)
@@ -258,7 +233,6 @@ def combine_scores(overlap_score, sim_score, sent_score):
     score_frame = score_frame.sort_values('sums', ascending = False)
 
     return score_frame
-    '''
 '''
 def scoring(business_reviews, user_reviews):
     
