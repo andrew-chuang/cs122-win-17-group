@@ -39,13 +39,16 @@ APPLICATION_NAME = "Yelp Recommender"
 
 # Following initializes Google Maps client due to its
 # planned use for scheduling and detail display. 
+# Confidential keys imported from Google Secrets file. 
 
+CID = g_config_secret.CID
+CIS = g_config_secret.CIS
+API_KEY = g_config_secret.API_KEY
 GMAPS = googlemaps.Client(API_KEY)
 
 
 # Following get_credentials function written using 
 # the Google API Quickstart page for syntactical help. 
-# 
 
 
 def get_credentials():
@@ -91,14 +94,15 @@ def event_calendar_adder(schedule_list):
     Output:
         event_list (list)
     '''
-    gmaps = Client(API_KEY)
+    gmaps = googlemaps.Client(API_KEY)
     event_list = []
     for event in schedule_list:
         event_dict = {}
         event_dict['summary'] = event['restaurant']
         rest_details = gmaps.place(event_dict['summary'])
         event_dict['location'] = rest_details['address']
-
+        event_list.append(event_dict)
+    return event_list
 
 
     
