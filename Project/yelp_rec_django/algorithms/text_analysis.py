@@ -6,7 +6,7 @@ import numpy as np
 import gensim
 from collections import defaultdict 
 from textblob import TextBlob
-from . import overlap
+from overlap import count_intersections
 #from overlap import count_intersections
 
 # include sql calls for text data, should return a list where each entry is the text of a review
