@@ -13,15 +13,18 @@ from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 from multiprocessing.pool import ThreadPool
 
-MAX_BIZ_REV = 30
-MAX_USER_REV = 15
+MAX_BIZ_REV = 2
+MAX_USER_REV = 2
 THREAD_SIZE = 3
+HEADER = {'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) \
+	AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'}
+
 DEBUG = True
 
 # Suppress warning output from urllib3
 urllib3.disable_warnings()
 # Set number of connections in order to use threading/pooling
-pm = urllib3.PoolManager(num_pools=6, maxsize=10)
+pm = urllib3.PoolManager(num_pools=5, maxsize=10)
 
 # read API keys for Yelp
 with open('config_secret.json') as cred:
@@ -41,13 +44,14 @@ class business:
 		attributes of business as listed on Yelp.
 	'''
 
-	def __init__(self, business_id):
+	def __init__(self, business_id, attr=True):
 		'''
 		Initialization uses the Yelp API to obtain the name, address, review count, 
 		rating, url and attributes of a business. 
 
 		Inputs:
 		    business_id (string) Yelp specific id for a business
+		    attr: indicates whether or not to scrape the attributes. 
 		'''
 		if DEBUG:
 			print('Making business...', business_id)
@@ -62,7 +66,8 @@ class business:
 		self.rating = biz.rating
 		self.url = biz.url.split('?')[0] + '?'
 		self.attributes = {}
-		self.scrape_biz_attributes()
+		if attr:
+			self.scrape_biz_attributes()
 
 
 	def scrape_biz_attributes(self):
@@ -75,7 +80,7 @@ class business:
 		    Method makes adjustments solely to the
 		    class attributes.
 		'''
-		html = pm.urlopen(url=self.url, method="GET").data
+		html = pm.urlopen(url=self.url, method="GET", header=HEADER).data
 		soup = bs4.BeautifulSoup(html, "html.parser")
 
 		attributes = soup.find_all('dt', class_='attribute-key')[2:]
@@ -164,7 +169,7 @@ def scrape_biz_reviews(business_id):
 	for page in pages:
 		url = biz.url + 'start={}'.format(page)
 		
-		html = pm.urlopen(url=url, method="GET").data
+		html = pm.urlopen(url=url, method="GET", header=HEADER).data
 		soup = bs4.BeautifulSoup(html, "html.parser")
 
 		rev_data = soup.find_all('div', itemprop='review')
@@ -286,7 +291,7 @@ def fetch_soup(url):
 	Fetches the soup for a given URL. Helper function created 
 		in order to use threading/pooling. 
 	'''
-	html = pm.urlopen(url=url, method='GET').data
+	html = pm.urlopen(url=url, method='GET', header=HEADER).data
 	soup = bs4.BeautifulSoup(html, "html.parser")
 	return soup
 
@@ -314,7 +319,7 @@ def scrape_biz_basics(business_id):
 	'''
 	biz_url = make_url(business_id = business_id)
 
-	html = pm.urlopen(url=biz_url, method="GET").data
+	html = pm.urlopen(url=biz_url, method="GET", header=HEADER).data
 	soup = bs4.BeautifulSoup(html, "html.parser")
 
 	address = soup.find_all('address')[1].text.strip()

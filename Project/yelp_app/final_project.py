@@ -85,12 +85,9 @@ def run_algorithms(database):
     biz_data, biz_reviews, user_reviews = \
         algorithms.text_analysis.sql_to_df(database)
     intersections = algorithms.overlap.count_intersections(user_reviews)
-    similarities, sentiments = \
+    scores = \
         algorithms.text_analysis.get_scores(biz_reviews, user_reviews)
-    scores = algorithms.text_analysis.combine_scores(intersections, 
-        similarities, sentiments)
     return scores
-
 
 
 def go(user_input, db):
@@ -99,3 +96,18 @@ def go(user_input, db):
     l = run_algorithms(db)
 
     return l
+
+def post_processing(df, n):
+    '''
+    Takes the dataframe returned by go() and extracts the relevant information. 
+    '''
+
+    results = list(df.iloc[0:n]['id'])
+    businesses = []
+    for biz_id in results:
+    	businesses.append(scraping.business(biz_id))
+
+
+    return businesses 
+
+
