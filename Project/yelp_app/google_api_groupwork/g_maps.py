@@ -45,10 +45,13 @@ def get_directions(rest1, rest2):
     directions_obj = gmaps.directions(rest1, rest2)
     directions_obj = directions_obj[0]
 
+    directions_string = ""
+
     for leg in directions_obj['legs']:
         for step in leg['steps']:
             html_instructions = step['html_instructions']
-            return html_instructions
+            directions_string += html_instructions
+    return directions_string
 
 
 def static_mapper(rest_list):
