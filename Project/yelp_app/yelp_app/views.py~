@@ -80,12 +80,7 @@ def recs(request):
 
 	addresses = []
 	for i in results:
-		try:
-			gmaps.static_mapper(i.address)
-		except: 
-			pass
-		else:
-			addresses.append(i.address)
+		addresses.append(i.address)
 	google_map = gmaps.static_mapper(addresses)
 	
 	return render(request, 'recs.html', {'results': results, 'map': google_map})
@@ -97,10 +92,7 @@ def details(request):
 	start = q['start']
 	business = scraping.business(selection)
 
-	try:
-		gmap = gmaps.static_mapper([business.address])
-	except:
-		gmap = 'Map could not be displayed'
+	gmap = gmaps.static_mapper([business.address])
 
 	directions = gmaps.get_directions(start, business.address)
 
