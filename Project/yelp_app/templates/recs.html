@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Your Recommendations</title>
+</head>
+<h1>Yelp Recommendation Engine</h1>
+<h2>CS122 Project</h2> 
+<h3>Team: Arif-Chuang-Hori-Teehan</h3>
+<p><strong>Your Recommendations</strong></p>
+
+To see more information about a specific recommendation, click on that result and press Submit. <br><br>
+
+{% autoescape off %}{{ map}}{% endautoescape %}
+<br><br>
+
+
+
+{% for i in results %}
+<b>{{ forloop.counter }}. {{ i.name }}</b><br>
+{{ i.address }}<br><br> 
+{% endfor %}
+
+
+<form action="/details" method="get">
+<select name='business'>
+{% for i in results %}
+  <option name='business' value={{ i.business_id }}> {{i.name}}, {{i.address}} 
+  </option>
+{% endfor %}
+</select>
+<br><br>
+
+  <input type="submit" value="Submit">
+</form>
+<br><br>
+
+</body>
+</html>
