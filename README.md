@@ -4,7 +4,7 @@ A project for CMSC 12200 - Computer Science with Applications II - University of
 
 Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 
-Hierarchy
+##Hierarchy
 - Project
 	- algorithms
 		- overlap.py
@@ -26,12 +26,12 @@ Hierarchy
 - .gitignore
 - README.md - This file
 
-Required APIs:
+## Required APIs:
 - Google Calendar
 - Google Maps
 - OAuth
 
-How to Run:
+## How to Run:
 - Navigate to Project/yelp_app
 - Run 'python manage.py runserver'
 - In a browser window, navigate to 127.0.0.1:8000
@@ -40,9 +40,9 @@ How to Run:
 - Your recommendation list should appear. At the bottom of the page, you may select a 
 	restaurant to view its details.
 	
-# Yelp Scraper:
+## Yelp Scraper:
 
-# Converting Data:
+## Converting Data:
 
 To manage the data scraped form Yelp, we import all data into a SQLITE3 database. This 
 database has several tables:
@@ -59,7 +59,7 @@ database has several tables:
 	- text
 	- user_id
 
-# Algorithms Overview:
+## Algorithms Overview:
 
 There are 3 algorithms used in this section. There is a simple algorithm that 
 determines how many times a restaurant appears in the user reviews, which are 
@@ -90,7 +90,7 @@ text_analysis.py:
 Contains all the functions for sentiment analysis and LSI
 
 
-# Google API Overview:
+## Google API Overview:
 
 Three files:
     g_maps.py: This file contains all functions directly calling on the 
