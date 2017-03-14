@@ -38,17 +38,35 @@ Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 - Google Calendar
 - Google Maps
 - OAuth
+- Yelp
 
 ## How to Run:
 - Navigate to Project/yelp_app
-- Run `python manage.py runserver`
+- Run `python3 manage.py runserver`
 - In a browser window, navigate to `127.0.0.1:8000`
 - Enter your desired restaurant with location (city, state, zip code, address)
 - Select your intended restaurant
 - Your recommendation list should appear. At the bottom of the page, you may select a 
 	restaurant to view its details.
 	
+(Possible bug: sometimes the Google Maps API breaks down if an address is improper. This only happened to us once. Not sure what causes it. This may cause the Django site to crash.)
+	
 ## Yelp Scraper:
+
+Main file: scraping.py. All other files are backups or copies I kept in case certain things broke. 
+
+Scrapes data from Yelp Business page and then from each User's page. Ensures reviews are not double-scraped. Makes use of Yelp API in Business Class. 
+
+Uses two important constants: 
+- MAX_BIZ_REV: How many reviews to scrape from business page
+- MAX_USER_REV: How many reviews to scrape from each user page
+
+These are currently set to 10 and 15, respectively, in order to keep runtimes on the lower end. We tested up to 30 x 30, but this took several minute even when running in native macOS. 
+
+Additional constants: 
+- THREAD_SIZE: How many parallel requests to send for multiprocessing (set to 3 to avoid getting blocked)
+- HEADER: Header used fur HTTP requests
+- DEBUG: True causes the program to run in 'verbose' mode, printing out each step as it occurs to the terminal. We are leaving this on False for our submission, but it is very useful to ensure that things are occurring because it can take several minutes for recommendations to load. 
 
 ## Converting Data:
 
