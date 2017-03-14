@@ -4,7 +4,7 @@ import numpy as np
 import gensim
 from collections import defaultdict 
 from textblob import TextBlob
-import overlap
+from . import overlap
 
 # some of the work from LSI was taken from the tutorials
 # here: https://radimrehurek.com/gensim/tutorial.html
@@ -102,7 +102,7 @@ def similarity_scoring(training_docs, test_doc):
         test_doc - string
 
     returns:
-        int
+        float
     '''
     # remember to get rid of special characters
     corp, dictionary = tokenize_to_vect(training_docs)
