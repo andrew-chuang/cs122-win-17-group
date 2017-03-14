@@ -31,8 +31,22 @@ Required APIs:
 - Google Maps
 - OAuth
 
+How to Run:
+- Navigate to Project/yelp_app
+- Run 'python manage.py runserver'
+- In a browser window, navigate to 127.0.0.1:8000
+- Enter your desired restaurant with location (city, state, zip code, address)
+- Select your intended restaurant
+- Your recommendation list should appear. At the bottom of the page, you may select a 
+	restaurant to view its details.
+	
+# Yelp Scraper:
 
-Algorithms Overview:
+# Converting Data:
+
+
+
+# Algorithms Overview:
 
 There are 3 algorithms used in this section. There is a simple algorithm that 
 determines how many times a restaurant appears in the user reviews, which are 
