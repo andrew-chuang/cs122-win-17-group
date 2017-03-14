@@ -189,6 +189,10 @@ def get_scores(business_reviews, user_reviews):
     score_frame = score_frame.sort_values('sums', ascending = False)
 
     return score_frame
+
+
+
+# unused functions that were mostly incorporated into the above functions
 '''
 def sentiment_scoring(business_reviews, user_reviews):
     
@@ -279,15 +283,4 @@ def scoring(business_reviews, user_reviews):
 
 # make sure there is a record of which restaurant goes with which document in doc list
 # make sure that training docs are each a long string of all the reviews for a given restaurant
-
-def get_names_and_addresses(sims, biz_data):
-    '''
-    Used code from PA3
-    '''
-    for x in sims:
-        name = d[x[0]]
-
-    pass
-
-# KMeans clusering algorithm
 
