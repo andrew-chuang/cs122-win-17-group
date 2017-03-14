@@ -2,11 +2,10 @@ pandas
 sklearn
 gensim
 httplib2
-os
 googlemaps
 bs4
 urllib3
-re
+regex
 yelp
 sys
 textblob
