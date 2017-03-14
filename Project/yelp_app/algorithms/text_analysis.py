@@ -149,7 +149,8 @@ def get_scores(business_reviews, user_reviews):
     # groups user reviews by restaurant
     # gets rid of some non restaurants
     stoplist = ['walgreens', 'cvs', 'taco-bell', 'mcdonalds', 'hair', \
-    'electronics', 'ikea', 'cinema', 'movie', 'nails', 'mattress', 'spa', 'salon']
+    'electronics', 'ikea', 'cinema', 'movie', 'nails', 'mattress', \
+    'spa', 'salon']
     for x in stoplist:
         user_reviews = user_reviews.drop(
             user_reviews[user_reviews.business_id.str.contains(x)].index)
