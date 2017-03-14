@@ -49,6 +49,8 @@ Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 - Your recommendation list should appear. At the bottom of the page, you may select a 
 	restaurant to view its details.
 	
+(Possible bug: sometimes the Google Maps API breaks down if an address is improper. This only happened to us once. Not sure what causes it. This may cause the Django site to crash.)
+	
 ## Yelp Scraper:
 
 Main file: scraping.py. All other files are backups or copies I kept in case certain things broke. 
