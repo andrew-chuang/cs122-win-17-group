@@ -13,7 +13,6 @@ from . import overlap
 
 # LSI
 
-#remove from file
 def sql_to_df(database):
     con = sqlite3.connect(database)
     with con:
