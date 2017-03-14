@@ -84,7 +84,7 @@ def recs(request):
 	
 	try:
 		google_map = gmaps.static_mapper(addresses)
-	else: 
+	except: 
 		google_map = 'Map could not be displayed'
 	
 	return render(request, 'recs.html', {'results': results, 'map': google_map})
