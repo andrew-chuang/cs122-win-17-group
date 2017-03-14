@@ -63,6 +63,7 @@ def tokenize_to_vect(doc_list):
     for text in text_lists:
         for k in text:
             freq[k] += 1
+    # small list of terms I thought would be important
     attribute_list = ["service", "quality", "romantic", "atmosphere"]
     # eliminates words that only appear once or are in the attributes list
     text_list2 = [[k for k in text if freq[k] > 1 and k not in attribute_list] for text in text_lists]
