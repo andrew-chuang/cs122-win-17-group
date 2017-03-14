@@ -80,13 +80,12 @@ def recs(request):
 
 	addresses = []
 	for i in results:
-		try:
-			gmaps.static_mapper(i.address)
-		except: 
-			pass 
-		else:
-			addresses.append(i.address)
-	google_map = gmaps.static_mapper(addresses)
+		addresses.append(i.address)
+	
+	try:
+		google_map = gmaps.static_mapper(addresses)
+	else: 
+		google_map = 'Map could not be displayed'
 	
 	return render(request, 'recs.html', {'results': results, 'map': google_map})
 	
