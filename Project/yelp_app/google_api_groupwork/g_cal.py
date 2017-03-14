@@ -78,8 +78,16 @@ def yelp_scheduler(restaurant_list, user_requests):
         restaurant_list (list) list of dictionaries for each restaurant
         containing name, address, type of food and opening/closing time
     '''
+    gmaps = googlemaps.Client(API_KEY)
+
+    schedule = []
     for rt in restaurant_list:
-      pass
+        rt_info = gmaps.places(rt)
+        if rt_info["results"]["opening_hours"]["open_now"]:
+            schedule.append(rt)
+    return schedule
+    
+
       
 
 def event_calendar_adder(schedule_list):
@@ -87,6 +95,7 @@ def event_calendar_adder(schedule_list):
     Function takes in a list of dictionaries that is in the order of the 
     schedule and changes them to the correct format that needs 
     to be in place for the official Google event input. 
+    Did not end up using this function. 
 
     Input:
         schedule_list (list)
@@ -191,8 +200,4 @@ def insert_event(event_list):
     else:
         print ('error')
 
-
-
-if __name__ == '__main__':
-    insert_event(ex_event_dict)
 

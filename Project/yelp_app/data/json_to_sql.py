@@ -27,7 +27,7 @@ Yelp provided functions:
 import json
 import sqlite3
 
-def import_json_data():
+def import_challenge_data():
     
     business_data = []
     count = 1
