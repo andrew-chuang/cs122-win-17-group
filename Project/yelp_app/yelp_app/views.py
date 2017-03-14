@@ -83,7 +83,7 @@ def recs(request):
 		try:
 			gmaps.static_mapper(i.address)
 		except: 
-			continue 
+			pass 
 		else:
 			addresses.append(i.address)
 	google_map = gmaps.static_mapper(addresses)
