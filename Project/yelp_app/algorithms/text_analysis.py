@@ -1,13 +1,11 @@
 import sqlite3
 import pandas as pd
-#import json
-#import operator as op
 import numpy as np
 import gensim
 from collections import defaultdict 
 from textblob import TextBlob
-from . import overlap
-#from overlap import count_intersections
+import overlap
+
 # some of the work from LSI was taken from the tutorials
 # here: https://radimrehurek.com/gensim/tutorial.html
 
@@ -48,15 +46,18 @@ def name_to_doc_num(biz_data):
 def tokenize_to_vect(doc_list):
     '''
     Takes a document list and returns a dictionary and a corpora consisting of
-    vectors 
+    vectors. I referenced this part of the tutorial:
+    http://radimrehurek.com/gensim/tut1.html
     inputs:
          list of strings
     returns:
          corpora
     '''
     # creates a list of works to get rid of
-    stoplist = set('for a of the and to in'.split())
-    text_lists = [[word for word in document.lower().split() if word not in stoplist] for document in doc_list]
+    stoplist = set(['a', 'and', 'for', 'in', 'of', 'the', 'to'])
+    text_lists = [[word for word in document.lower().split() \
+    if word not in stoplist] for document in doc_list]
+
     freq = defaultdict(int)
     # creates frequency dictionary
     for text in text_lists:
@@ -72,7 +73,8 @@ def tokenize_to_vect(doc_list):
 def apply_lsi(corp, dictionary):
     '''
     Applies latent semantic indexing to a corpora given a dictionary 
-
+    Used this section of the tutorial:
+    http://radimrehurek.com/gensim/tut2.html
     inputs
         corp - corpora
         dictionary - dict
@@ -92,7 +94,8 @@ def apply_lsi(corp, dictionary):
 def similarity_scoring(training_docs, test_doc):
     '''
     Scores a string against a list of training strings
-
+    Referenced this section of the tutorial:
+    http://radimrehurek.com/gensim/tut3.html
     inputs:
         training_docs - list of strings
         test_doc - string
@@ -157,20 +160,22 @@ def get_scores(business_reviews, user_reviews):
         # similarity scoring
         sim = similarity_scoring(business_reviews.text, users_grouped[i])
         # selects only reviews for which keywords can be generated
-        if len(users_grouped[i]) > 400:
+        if len(users_grouped[i]) > 450:
             keywords = gensim.summarization.keywords(users_grouped[i])
             keywords = keywords.split('\n')
         else:
             keywords = "Review is too small for keywords"  
+
+        overlap_score = overlap_dict[users_grouped.axes[0][i]]
 
         # does sentiment analysis and subtracts baseline
         blob = TextBlob(users_grouped[i])
         sent = blob.sentiment.polarity
         sent = sent - avg
 
-        overlap_score = overlap_dict[users_grouped.axes[0][i]]
 
-        score_list.append((users_grouped.axes[0][i], sim, keywords, sent, overlap_score))
+        score_list.append((users_grouped.axes[0][i], \
+            sim, keywords, sent, overlap_score))
 
 
     score_frame = pd.DataFrame(score_list)
@@ -179,7 +184,8 @@ def get_scores(business_reviews, user_reviews):
 
     # weights the scores by the number of restaurants
     factor = len(score_frame.overlaps)
-    score_frame = pd.concat([score_frame, 2 * (factor // 3) * (.5 * score_frame.sents + score_frame.sims) + \
+    score_frame = pd.concat([score_frame, 2 * (factor // 3) * \
+        (.5 * score_frame.sents + score_frame.sims) + \
         (factor // 3) * score_frame.overlaps], 1)
 
     score_frame.columns = ['id','similarity', 'keywords', 'sentiment', 'overlaps', 'sums']
@@ -281,6 +287,4 @@ def scoring(business_reviews, user_reviews):
     return scores
 '''
 
-# make sure there is a record of which restaurant goes with which document in doc list
-# make sure that training docs are each a long string of all the reviews for a given restaurant
 
