@@ -44,7 +44,7 @@ Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 - Navigate to Project/yelp_app
 - Run `python3 manage.py runserver`
 - In a browser window, navigate to `127.0.0.1:8000`
-- Enter your desired restaurant with location (city, state, zip code, address)
+- Enter your desired restaurant with location (city, state, zip code, or address)
 - Select your intended restaurant
 - Your recommendation list should appear. At the bottom of the page, you may select a 
 	restaurant to view its details.
@@ -70,7 +70,7 @@ Additional constants:
 
 ## Converting Data:
 
-To manage the data scraped form Yelp, we import all data into a SQLITE3 database. This 
+To manage the data scraped form Yelp, we import all data into a SQLite3 database. This 
 database has several tables:
 - business
 	- business_id
