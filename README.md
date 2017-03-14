@@ -54,4 +54,12 @@ scoring and subtract the baseline score to get the sentiment score.
 These are then weighted to give more emphasis to similarity scoring than 
 sentiment scoring, and more emphasis to their sum than to the overlap score.
 
+overlap.py:
+
+Counts the number of times that a review appears in the user reviews dataframe
+
+text_analysis.py:
+
+Contains all the functions for sentiment analysis and LSI
+
 
