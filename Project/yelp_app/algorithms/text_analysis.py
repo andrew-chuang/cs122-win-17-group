@@ -134,12 +134,7 @@ def get_scores(business_reviews, user_reviews):
         sim_frame - DataFrame
         sent_frame - dataframe
     '''
-    '''
-    grouped = business_reviews.groupby(business_reviews["business_id"])["text"].sum()
     
-    if len(grouped.axes[0]) < 2:
-        grouped = business_reviews
-    '''
     # gets dictionary with overlap scores
     overlap_dict = overlap.count_intersections(user_reviews)
 
@@ -152,6 +147,12 @@ def get_scores(business_reviews, user_reviews):
     avg = np.mean(br_array)
 
     # groups user reviews by restaurant
+    # gets rid of some non restaurants
+    stoplist = ['walgreens', 'cvs', 'taco-bell', 'mcdonalds', 'hair', \
+    'electronics', 'ikea', 'cinema', 'movie', 'nails', 'mattress', 'spa', 'salon']
+    for x in stoplist:
+        user_reviews = user_reviews.drop(
+            user_reviews[user_reviews.business_id.str.contains(x)].index)
     users_grouped = user_reviews.groupby(user_reviews["business_id"])["text"].sum()
     
     # gets list of tuples with scores and keywords
@@ -161,7 +162,7 @@ def get_scores(business_reviews, user_reviews):
         sim = similarity_scoring(business_reviews.text, users_grouped[i])
         # selects only reviews for which keywords can be generated
         if len(users_grouped[i]) > 450:
-            keywords = gensim.summarization.keywords(users_grouped[i])
+            keywords = gensim.summarization.keywords(users_grouped[i], ratio = .5)
             keywords = keywords.split('\n')
         else:
             keywords = "Review is too small for keywords"  
