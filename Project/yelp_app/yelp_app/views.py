@@ -89,13 +89,16 @@ def recs(request):
 def details(request):
 	q = request.GET
 	selection = q['business']
+	start = q['start']
 	business = scraping.business(selection)
 
 	gmap = gmaps.static_mapper([business.address])
 
+	directions = gmaps.get_directions(start, business.address)
+
 	return render(request, 'details.html', {'name': business.name, 
 		'addr': business.address, 'map': gmap, 'rating': business.rating, 
-		'count': business.review_count, 'url': business.url})
+		'count': business.review_count, 'url': business.url, 'dir': directions})
 
 def current_datetime(request):
 	'''

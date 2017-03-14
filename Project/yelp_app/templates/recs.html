@@ -9,7 +9,9 @@
 <h3>Team: Arif-Chuang-Hori-Teehan</h3>
 <p><strong>Your Recommendations</strong></p>
 
-To see more information about a specific recommendation, click on that result and press Submit. <br><br>
+To see more information about a specific recommendation, click on that result and press Submit. <br>
+If you enter a starting address, directions will be provided on the next page. 
+<br><br>
 
 {% autoescape off %}{{ map}}{% endautoescape %}
 <br><br>
@@ -30,7 +32,8 @@ To see more information about a specific recommendation, click on that result an
 {% endfor %}
 </select>
 <br><br>
-
+  Starting address/location (optional): 
+  <input type="text" name="start"><br><br>
   <input type="submit" value="Submit">
 </form>
 <br><br>
