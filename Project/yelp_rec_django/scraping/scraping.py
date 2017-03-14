@@ -19,7 +19,7 @@ THREAD_SIZE = 3
 DEBUG = True
 
 # Suppress warning output from urllib3
-urllib3.disable_warnings()
+#urllib3.disable_warnings()
 # Set number of connections in order to use threading/pooling
 pm = urllib3.PoolManager(num_pools=5, maxsize=10)
 
