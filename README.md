@@ -44,7 +44,20 @@ How to Run:
 
 # Converting Data:
 
-
+To manage the data scraped form Yelp, we import all data into a SQLITE3 database. This 
+database has several tables:
+- business
+	- business_id
+- biz_reviews
+	- business_id
+	- stars
+	- text
+	- user_id
+- user_reviews
+	- business_id
+	- stars
+	- text
+	- user_id
 
 # Algorithms Overview:
 
@@ -77,7 +90,7 @@ text_analysis.py:
 Contains all the functions for sentiment analysis and LSI
 
 
-Google API Overview:
+# Google API Overview:
 
 Three files:
     g_maps.py: This file contains all functions directly calling on the 
