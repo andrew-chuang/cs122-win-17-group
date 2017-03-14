@@ -50,6 +50,21 @@ Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 	
 ## Yelp Scraper:
 
+Main file: scraping.py. All other files are backups or copies I kept in case certain things broke. 
+
+Scrapes data from Yelp Business page and then from each User's page. Ensures reviews are not double-scraped. Makes use of Yelp API in Business Class. 
+
+Uses two important constants: 
+- MAX_BIZ_REV: How many reviews to scrape from business page
+- MAX_USER_REV: How many reviews to scrape from each user page
+
+These are currently set to 10 and 15, respectively, in order to keep runtimes on the lower end. We tested up to 30 x 30, but this took several minute even when running in native macOS. 
+
+Additional constants: 
+- THREAD_SIZE: How many parallel requests to send for multiprocessing (set to 3 to avoid getting blocked)
+- HEADER: Header used fur HTTP requests
+- DEBUG: True causes the program to run in 'verbose' mode, printing out each step as it occurs to the terminal. We are leaving this on False for our submission, but it is very useful to ensure that things are occurring because it can take several minutes for recommendations to load. 
+
 ## Converting Data:
 
 To manage the data scraped form Yelp, we import all data into a SQLITE3 database. This 
