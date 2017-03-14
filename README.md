@@ -6,18 +6,26 @@ Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 
 ## Hierarchy
 - Project
-	- algorithms
-		- overlap.py
-		- text_analysis.py
-	- data - Jon
-		- json_to_sql.py
-	- django-workshop/mysite
-	- google_api_groupwork
-	- scraping
-		- scraping.py
-	- yelp_rec_django
-	- final_project.py - MASTER FILE
-	- requirements.txt - List of required libraries
+	- yelp_app
+		- algorithms
+			- overlap.py
+			- text_analysis.py
+		- data
+			- json_to_sql.py
+		- google_api_groupwork
+			- g_cal.py
+			- g_maps.py
+		- scraping
+			- scraping.py
+		- templates
+		- yelp_app
+		- yelp_rec_django
+		- final_project.py
+		- config_secret.json
+		- db.sqlite3
+		- final_project.py
+		- manage.py
+	- requirements.txt
 - Preliminary
 	- Arif-Chuang-Hori-Teehan Proposal.pdf
 	- Outline of Yelp API
