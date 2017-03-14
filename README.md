@@ -38,10 +38,11 @@ Authors: @salman-arif @andrew-chuang @jonathan-hori @rteehas
 - Google Calendar
 - Google Maps
 - OAuth
+- Yelp
 
 ## How to Run:
 - Navigate to Project/yelp_app
-- Run `python manage.py runserver`
+- Run `python3 manage.py runserver`
 - In a browser window, navigate to `127.0.0.1:8000`
 - Enter your desired restaurant with location (city, state, zip code, address)
 - Select your intended restaurant
